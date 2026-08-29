@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Câmara de Guapimirim – Projetos e Indicações</title>
+  <style>
+    :root {
+      --primary: #1a365d;
+      --primary-light: #2b6cb0;
+      --bg: #f7fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #2d3748;
+      --muted: #718096;
+      --success: #38a169;
+      --warning: #d69e2e;
+      --danger: #e53e3e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    header .subtitle {
+      font-size: 0.85rem;
+      opacity: 0.85;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    /* Filtros */
+    .filters {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: flex-end;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-width: 140px;
+    }
+
+    .filter-group label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .filter-group input,
+    .filter-group select {
+      padding: 0.45rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background: white;
+    }
+
+    .filter-group input:focus,
+    .filter-group select:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.15);
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-light);
+    }
+
+    .btn-outline {
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      background: #edf2f7;
+    }
+
+    /* Stats */
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 0.75rem 1.1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      min-width: 110px;
+    }
+
+    .stat-card .number {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-card .label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* Tabela */
+    .table-wrapper {
+      background: var(--card);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      overflow: auto;
+      max-height: calc(100vh - 280px);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #edf2f7;
+    }
+
+    th {
+      padding: 0.7rem 0.75rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--primary);
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    th:hover {
+      background: #e2e8f0;
+    }
+
+    th .sort-icon {
+      margin-left: 4px;
+      opacity: 0.4;
+    }
+
+    th.sorted .sort-icon {
+      opacity: 1;
+    }
+
+    td {
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tr:hover td {
+      background: #f7fafc;
+    }
+
+    .ementa-cell {
+      max-width: 380px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ementa-cell:hover {
+      white-space: normal;
+      overflow: visible;
+      background: #fffbeb;
+      position: relative;
+      z-index: 5;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-indicacao { background: #ebf8ff; color: #2b6cb0; }
+    .badge-projeto   { background: #faf5ff; color: #6b46c1; }
+    .badge-requerimento { background: #fffaf0; color: #c05621; }
+    .badge-lei       { background: #f0fff4; color: #276749; }
+    .badge-resolucao { background: #fefcbf; color: #975a16; }
+
+    .status-deferida    { color: var(--success); font-weight: 600; }
+    .status-sancionado  { color: var(--success); font-weight: 600; }
+    .status-tramitacao  { color: var(--warning); font-weight: 600; }
+    .status-aprovado    { color: var(--primary-light); font-weight: 600; }
+
+    .empty {
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 768px) {
+      .filters { flex-direction: column; align-items: stretch; }
+      .filter-group { min-width: 100%; }
+      .table-wrapper { max-height: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Câmara Municipal de Guapimirim</h1>
+      <div class="subtitle">Projetos, Indicações e Leis</div>
+    </div>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+      <button class="btn btn-outline" onclick="exportCSV()">Exportar CSV</button>
+      <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">Importar arquivos</button>
+      <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.json" style="display:none" onchange="handleFiles(event)" />
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="filters">
+      <div class="filter-group search-box">
+        <label>Buscar</label>
+        <input type="text" id="search" placeholder="Ementa, autor, número, bairro..." oninput="applyFilters()" />
+      </div>
+
+      <div class="filter-group">
+        <label>Tipo</label>
+        <select id="filtroTipo" onchange="applyFilters()">
+          <option value="">Todos</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Autor</label>
+        <select id="filtroAutor" onchange="applyFilters()">
+          <option value="">Todos</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Tema</label>
+        <select id="filtroTema" onchange="applyFilters()">
+          <option value="">Todos</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Bairro</label>
+        <select id="filtroBairro" onchange="applyFilters()">
+          <option value="">Todos</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Status</label>
+        <select id="filtroStatus" onchange="applyFilters()">
+          <option value="">Todos</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Ano</label>
+        <select id="filtroAno" onchange="applyFilters()">
+          <option value="">Todos</option>
+        </select>
+      </div>
+
+      <button class="btn btn-outline" onclick="clearFilters()">Limpar</button>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th data-col="data_sessao">Sessão/Data <span class="sort-icon">↕</span></th>
+            <th data-col="tipo">Matéria <span class="sort-icon">↕</span></th>
+            <th data-col="numero">Nº <span class="sort-icon">↕</span></th>
+            <th data-col="autor">Autor <span class="sort-icon">↕</span></th>
+            <th data-col="ementa">Ementa <span class="sort-icon">↕</span></th>
+            <th data-col="lei">Lei <span class="sort-icon">↕</span></th>
+            <th data-col="ano">Ano <span class="sort-icon">↕</span></th>
+            <th data-col="data_sancao">Data Sanção <span class="sort-icon">↕</span></th>
+            <th data-col="tema">Tema <span class="sort-icon">↕</span></th>
+            <th data-col="calendario">Calendário <span class="sort-icon">↕</span></th>
+            <th data-col="bairro">Bairro <span class="sort-icon">↕</span></th>
+            <th data-col="secretaria">Secretaria <span class="sort-icon">↕</span></th>
+            <th data-col="leitura">Leitura <span class="sort-icon">↕</span></th>
+            <th data-col="primeira_votacao">1ª Vot. <span class="sort-icon">↕</span></th>
+            <th data-col="segunda_votacao">2ª Vot. <span class="sort-icon">↕</span></th>
+            <th data-col="votacao_unica">Vot. Ún. <span class="sort-icon">↕</span></th>
+            <th data-col="status">Status <span class="sort-icon">↕</span></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div id="empty" class="empty" style="display:none">Nenhum registro encontrado</div>
+    </div>
+  </div>
+
+  <footer>
+    Dados da Câmara Municipal de Guapimirim • App estático (HTML + JSON)
+  </footer>
+
+  <script>
+    let dados = [];
+    let filtered = [];
+    let sortCol = "data_sessao";
+    let sortAsc = false;
+
+    async function loadData() {
+      try {
+        const res = await fetch("dados.json");
+        dados = await res.json();
+        populateFilters();
+        applyFilters();
+      } catch (e) {
+        console.error(e);
+        document.getElementById("tbody").innerHTML = `<tr><td colspan="17" class="empty">Erro ao carregar dados.json</td></tr>`;
+      }
+    }
+
+    function uniqueValues(key) {
+      const set = new Set();
+      dados.forEach(d => {
+        const v = d[key];
+        if (v) set.add(v);
+      });
+      return [...set].sort((a, b) => String(a).localeCompare(String(b), "pt-BR"));
+    }
+
+    function populateFilters() {
+      fillSelect("filtroTipo", uniqueValues("tipo"));
+      fillSelect("filtroAutor", uniqueValues("autor"));
+      fillSelect("filtroTema", uniqueValues("tema"));
+      fillSelect("filtroBairro", uniqueValues("bairro"));
+      fillSelect("filtroStatus", uniqueValues("status"));
+      fillSelect("filtroAno", uniqueValues("ano"));
+    }
+
+    function fillSelect(id, values) {
+      const sel = document.getElementById(id);
+      const current = sel.value;
+      sel.innerHTML = `<option value="">Todos</option>`;
+      values.forEach(v => {
+        const opt = document.createElement("option");
+        opt.value = v;
+        opt.textContent = v;
+        sel.appendChild(opt);
+      });
+      sel.value = current;
+    }
+
+    function applyFilters() {
+      const q = document.getElementById("search").value.toLowerCase().trim();
+      const tipo = document.getElementById("filtroTipo").value;
+      const autor = document.getElementById("filtroAutor").value;
+      const tema = document.getElementById("filtroTema").value;
+      const bairro = document.getElementById("filtroBairro").value;
+      const status = document.getElementById("filtroStatus").value;
+      const ano = document.getElementById("filtroAno").value;
+
+      filtered = dados.filter(d => {
+        if (tipo && d.tipo !== tipo) return false;
+        if (autor && d.autor !== autor) return false;
+        if (tema && d.tema !== tema) return false;
+        if (bairro && d.bairro !== bairro) return false;
+        if (status && d.status !== status) return false;
+        if (ano && String(d.ano) !== ano) return false;
+
+        if (q) {
+          const text = [
+            d.ementa, d.autor, d.numero, d.bairro, d.tema,
+            d.secretaria, d.tipo, d.lei, d.calendario
+          ].join(" ").toLowerCase();
+          if (!text.includes(q)) return false;
+        }
+        return true;
+      });
+
+      sortData();
+      renderTable();
+      renderStats();
+    }
+
+    function sortData() {
+      filtered.sort((a, b) => {
+        let va = a[sortCol] ?? "";
+        let vb = b[sortCol] ?? "";
+        if (typeof va === "number" && typeof vb === "number") {
+          return sortAsc ? va - vb : vb - va;
+        }
+        va = String(va);
+        vb = String(vb);
+        return sortAsc ? va.localeCompare(vb, "pt-BR") : vb.localeCompare(va, "pt-BR");
+      });
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById("tbody");
+      const empty = document.getElementById("empty");
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = "";
+        empty.style.display = "block";
+        return;
+      }
+      empty.style.display = "none";
+
+      tbody.innerHTML = filtered.map(d => {
+        const tipoClass = {
+          "Indicação": "badge-indicacao",
+          "Projeto de Lei": "badge-projeto",
+          "Requerimento": "badge-requerimento",
+          "Lei": "badge-lei",
+          "Projeto de Resolução": "badge-resolucao"
+        }[d.tipo] || "badge-indicacao";
+
+        const statusClass = {
+          "Deferida": "status-deferida",
+          "Sancionado": "status-sancionado",
+          "Em tramitação": "status-tramitacao",
+          "Aprovado": "status-aprovado"
+        }[d.status] || "";
+
+        return `<tr>
+          <td>${d.data_sessao || "—"}</td>
+          <td><span class="badge ${tipoClass}">${d.tipo || "—"}</span></td>
+          <td>${d.numero || "—"}</td>
+          <td>${d.autor || "—"}</td>
+          <td class="ementa-cell" title="${escapeHtml(d.ementa || "")}">${d.ementa || "—"}</td>
+          <td>${d.lei || "—"}</td>
+          <td>${d.ano || "—"}</td>
+          <td>${d.data_sancao || "—"}</td>
+          <td>${d.tema || "—"}</td>
+          <td>${d.calendario || "—"}</td>
+          <td>${d.bairro || "—"}</td>
+          <td>${d.secretaria || "—"}</td>
+          <td>${d.leitura || "—"}</td>
+          <td>${d.primeira_votacao || "—"}</td>
+          <td>${d.segunda_votacao || "—"}</td>
+          <td>${d.votacao_unica || "—"}</td>
+          <td class="${statusClass}">${d.status || "—"}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    function renderStats() {
+      const total = filtered.length;
+      const indicacoes = filtered.filter(d => d.tipo === "Indicação").length;
+      const projetos = filtered.filter(d => d.tipo === "Projeto de Lei").length;
+      const leis = filtered.filter(d => d.tipo === "Lei").length;
+      const deferidas = filtered.filter(d => d.status === "Deferida").length;
+
+      document.getElementById("stats").innerHTML = `
+        <div class="stat-card"><div class="number">${total}</div><div class="label">Total</div></div>
+        <div class="stat-card"><div class="number">${indicacoes}</div><div class="label">Indicações</div></div>
+        <div class="stat-card"><div class="number">${projetos}</div><div class="label">Projetos de Lei</div></div>
+        <div class="stat-card"><div class="number">${leis}</div><div class="label">Leis</div></div>
+        <div class="stat-card"><div class="number">${deferidas}</div><div class="label">Deferidas</div></div>
+      `;
+    }
+
+    function clearFilters() {
+      document.getElementById("search").value = "";
+      document.getElementById("filtroTipo").value = "";
+      document.getElementById("filtroAutor").value = "";
+      document.getElementById("filtroTema").value = "";
+      document.getElementById("filtroBairro").value = "";
+      document.getElementById("filtroStatus").value = "";
+      document.getElementById("filtroAno").value = "";
+      applyFilters();
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // Ordenação por clique no cabeçalho
+    document.querySelectorAll("th[data-col]").forEach(th => {
+      th.addEventListener("click", () => {
+        const col = th.dataset.col;
+        if (sortCol === col) {
+          sortAsc = !sortAsc;
+        } else {
+          sortCol = col;
+          sortAsc = true;
+        }
+        document.querySelectorAll("th").forEach(t => t.classList.remove("sorted"));
+        th.classList.add("sorted");
+        applyFilters();
+      });
+    });
+
+    function exportCSV() {
+      if (filtered.length === 0) return alert("Nenhum dado para exportar");
+      const headers = ["Sessão/Data","Matéria","Nº","Autor","Ementa","Lei","Ano","Data Sanção","Tema","Calendário","Bairro","Secretaria","Leitura","1ª Vot.","2ª Vot.","Vot. Ún.","Status"];
+      const keys = ["data_sessao","tipo","numero","autor","ementa","lei","ano","data_sancao","tema","calendario","bairro","secretaria","leitura","primeira_votacao","segunda_votacao","votacao_unica","status"];
+      const rows = filtered.map(d => keys.map(k => `"${String(d[k] ?? "").replace(/"/g, '""')}"`).join(","));
+      const csv = [headers.join(","), ...rows].join("\n");
+      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "camara-guapimirim.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Placeholder para importação futura
+    function handleFiles(e) {
+      alert("Função de importação de PDF/DOCX será implementada em breve.\nPor enquanto, use o script Python ou me envie os arquivos para eu atualizar o JSON.");
+      e.target.value = "";
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
