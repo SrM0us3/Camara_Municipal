@@ -74,8 +74,8 @@
     .filter-group {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
-      min-width: 130px;
+      gap: 0.2rem;
+      min-width: 110px;
     }
 
     .filter-group label {
@@ -102,7 +102,7 @@
       box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.15);
     }
 
-    .search-box { flex: 1; min-width: 200px; }
+    .search-box { flex: 1; min-width: 160px; }
 
     .btn {
       padding: 0.4rem 0.85rem;
@@ -119,12 +119,20 @@
     .btn-outline { background: white; border: 1px solid var(--border); color: var(--text); }
     .btn-outline:hover { background: #edf2f7; }
 
-    .stats {
+    .stats-row {
       display: flex;
       flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
       gap: 0.5rem;
       margin-bottom: 0.4rem;
       flex-shrink: 0;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
     }
 
     .stat-card {
@@ -238,14 +246,12 @@
     .stats-vereador {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 0.45rem;
-      padding: 0.45rem 0.75rem;
+      gap: 0.4rem;
+      padding: 0.35rem 0.65rem;
       background: #ebf8ff;
       border-radius: 6px;
       border-left: 3px solid #2b6cb0;
       align-items: center;
-      flex-shrink: 0;
     }
     .stats-vereador .vereador-nome {
       font-weight: 700;
@@ -279,6 +285,10 @@
       }
       .filters { flex-direction: column; align-items: stretch; }
       .filter-group { min-width: 100%; }
+      .stats-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
       .table-wrapper {
         flex: none;
         max-height: none;
@@ -347,8 +357,10 @@
       <button class="btn btn-outline" onclick="clearFilters()">Limpar</button>
     </div>
 
-    <div class="stats" id="stats"></div>
-    <div class="stats-vereador" id="statsVereador"></div>
+    <div class="stats-row">
+      <div class="stats" id="stats"></div>
+      <div class="stats-vereador" id="statsVereador"></div>
+    </div>
 
     <div class="table-wrapper">
       <table>
