@@ -407,6 +407,13 @@
       return parts[2] + "/" + parts[1] + "/" + parts[0];
     }
 
+    function formatNumber(n) {
+      if (n == null || n === "") return "—";
+      if (n === "Vetado") return "Vetado";
+      // Add thousand separator with dot (Brazilian style)
+      return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
     function renderTable() {
       const tbody = document.getElementById("tbody");
       const empty = document.getElementById("empty");
@@ -437,7 +444,7 @@
 
         const leiDisplay = d.lei === "Vetado"
           ? '<span class="lei-vetado">Vetado</span>'
-          : (d.lei || "—");
+          : formatNumber(d.lei);
 
         const sessaoHtml = (d.sessao || d.data_sessao)
           ? '<div class="sessao-cell">' +
@@ -449,7 +456,7 @@
         return '<tr>' +
           '<td>' + sessaoHtml + '</td>' +
           '<td><span class="badge ' + tipoClass + '">' + (d.tipo || "—") + '</span></td>' +
-          '<td>' + (d.numero || "—") + '</td>' +
+          '<td>' + formatNumber(d.numero) + '</td>' +
           '<td>' + (d.ano || "—") + '</td>' +
           '<td>' + (d.autor || "—") + '</td>' +
           '<td class="ementa-cell" title="' + escapeHtml(d.ementa || "") + '">' + (d.ementa || "—") + '</td>' +
