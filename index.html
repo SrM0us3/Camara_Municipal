@@ -18,11 +18,7 @@
       --danger: #e53e3e;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -43,23 +39,11 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
-    header h1 {
-      font-size: 1.25rem;
-      font-weight: 600;
-    }
+    header h1 { font-size: 1.25rem; font-weight: 600; }
+    header .subtitle { font-size: 0.85rem; opacity: 0.85; }
 
-    header .subtitle {
-      font-size: 0.85rem;
-      opacity: 0.85;
-    }
+    .container { max-width: 1700px; margin: 0 auto; padding: 1rem; }
 
-    .container {
-      max-width: 1600px;
-      margin: 0 auto;
-      padding: 1rem;
-    }
-
-    /* Filtros */
     .filters {
       background: var(--card);
       border-radius: 8px;
@@ -76,11 +60,11 @@
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
-      min-width: 140px;
+      min-width: 130px;
     }
 
     .filter-group label {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
       color: var(--muted);
       text-transform: uppercase;
@@ -103,10 +87,7 @@
       box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.15);
     }
 
-    .search-box {
-      flex: 1;
-      min-width: 220px;
-    }
+    .search-box { flex: 1; min-width: 200px; }
 
     .btn {
       padding: 0.5rem 1rem;
@@ -118,26 +99,11 @@
       transition: background 0.15s;
     }
 
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-light); }
+    .btn-outline { background: white; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover { background: #edf2f7; }
 
-    .btn-primary:hover {
-      background: var(--primary-light);
-    }
-
-    .btn-outline {
-      background: white;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-
-    .btn-outline:hover {
-      background: #edf2f7;
-    }
-
-    /* Stats */
     .stats {
       display: flex;
       flex-wrap: wrap;
@@ -150,35 +116,21 @@
       border-radius: 8px;
       padding: 0.75rem 1.1rem;
       box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-      min-width: 110px;
+      min-width: 100px;
     }
 
-    .stat-card .number {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
+    .stat-card .number { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+    .stat-card .label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; }
 
-    .stat-card .label {
-      font-size: 0.75rem;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
-
-    /* Tabela */
     .table-wrapper {
       background: var(--card);
       border-radius: 8px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
       overflow: auto;
-      max-height: calc(100vh - 280px);
+      max-height: calc(100vh - 270px);
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
 
     thead {
       position: sticky;
@@ -188,7 +140,7 @@
     }
 
     th {
-      padding: 0.7rem 0.75rem;
+      padding: 0.65rem 0.7rem;
       text-align: left;
       font-weight: 600;
       color: var(--primary);
@@ -198,36 +150,28 @@
       user-select: none;
     }
 
-    th:hover {
-      background: #e2e8f0;
-    }
-
-    th .sort-icon {
-      margin-left: 4px;
-      opacity: 0.4;
-    }
-
-    th.sorted .sort-icon {
-      opacity: 1;
-    }
+    th:hover { background: #e2e8f0; }
+    th .sort-icon { margin-left: 3px; opacity: 0.35; font-size: 0.75rem; }
+    th.sorted .sort-icon { opacity: 1; }
 
     td {
-      padding: 0.6rem 0.75rem;
+      padding: 0.55rem 0.7rem;
       border-bottom: 1px solid var(--border);
       vertical-align: top;
     }
 
-    tr:hover td {
-      background: #f7fafc;
-    }
+    tr:hover td { background: #f7fafc; }
+
+    .sessao-cell { white-space: nowrap; font-size: 0.82rem; }
+    .sessao-cell .sessao-nome { font-weight: 500; }
+    .sessao-cell .sessao-data { color: var(--muted); font-size: 0.78rem; }
 
     .ementa-cell {
-      max-width: 380px;
+      max-width: 340px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
     .ementa-cell:hover {
       white-space: normal;
       overflow: visible;
@@ -241,27 +185,26 @@
       display: inline-block;
       padding: 0.15rem 0.5rem;
       border-radius: 999px;
-      font-size: 0.72rem;
+      font-size: 0.71rem;
       font-weight: 600;
       white-space: nowrap;
     }
 
-    .badge-indicacao { background: #ebf8ff; color: #2b6cb0; }
-    .badge-projeto   { background: #faf5ff; color: #6b46c1; }
-    .badge-requerimento { background: #fffaf0; color: #c05621; }
-    .badge-lei       { background: #f0fff4; color: #276749; }
-    .badge-resolucao { background: #fefcbf; color: #975a16; }
+    .badge-indicacao     { background: #ebf8ff; color: #2b6cb0; }
+    .badge-projeto       { background: #faf5ff; color: #6b46c1; }
+    .badge-requerimento  { background: #fffaf0; color: #c05621; }
+    .badge-lei           { background: #f0fff4; color: #276749; }
+    .badge-resolucao     { background: #fefcbf; color: #975a16; }
 
-    .status-deferida    { color: var(--success); font-weight: 600; }
-    .status-sancionado  { color: var(--success); font-weight: 600; }
-    .status-tramitacao  { color: var(--warning); font-weight: 600; }
-    .status-aprovado    { color: var(--primary-light); font-weight: 600; }
+    .status-deferida     { color: var(--success); font-weight: 600; }
+    .status-sancionado   { color: var(--success); font-weight: 600; }
+    .status-tramitacao   { color: var(--warning); font-weight: 600; }
+    .status-aprovado     { color: var(--primary-light); font-weight: 600; }
+    .status-vetado       { color: var(--danger); font-weight: 600; }
 
-    .empty {
-      text-align: center;
-      padding: 3rem;
-      color: var(--muted);
-    }
+    .lei-vetado { color: var(--danger); font-weight: 600; }
+
+    .empty { text-align: center; padding: 3rem; color: var(--muted); }
 
     footer {
       text-align: center;
@@ -299,44 +242,32 @@
 
       <div class="filter-group">
         <label>Tipo</label>
-        <select id="filtroTipo" onchange="applyFilters()">
-          <option value="">Todos</option>
-        </select>
+        <select id="filtroTipo" onchange="applyFilters()"><option value="">Todos</option></select>
       </div>
 
       <div class="filter-group">
         <label>Autor</label>
-        <select id="filtroAutor" onchange="applyFilters()">
-          <option value="">Todos</option>
-        </select>
+        <select id="filtroAutor" onchange="applyFilters()"><option value="">Todos</option></select>
       </div>
 
       <div class="filter-group">
         <label>Tema</label>
-        <select id="filtroTema" onchange="applyFilters()">
-          <option value="">Todos</option>
-        </select>
+        <select id="filtroTema" onchange="applyFilters()"><option value="">Todos</option></select>
       </div>
 
       <div class="filter-group">
         <label>Bairro</label>
-        <select id="filtroBairro" onchange="applyFilters()">
-          <option value="">Todos</option>
-        </select>
+        <select id="filtroBairro" onchange="applyFilters()"><option value="">Todos</option></select>
       </div>
 
       <div class="filter-group">
         <label>Status</label>
-        <select id="filtroStatus" onchange="applyFilters()">
-          <option value="">Todos</option>
-        </select>
+        <select id="filtroStatus" onchange="applyFilters()"><option value="">Todos</option></select>
       </div>
 
       <div class="filter-group">
-        <label>Ano</label>
-        <select id="filtroAno" onchange="applyFilters()">
-          <option value="">Todos</option>
-        </select>
+        <label>Ano Matéria</label>
+        <select id="filtroAno" onchange="applyFilters()"><option value="">Todos</option></select>
       </div>
 
       <button class="btn btn-outline" onclick="clearFilters()">Limpar</button>
@@ -348,13 +279,14 @@
       <table>
         <thead>
           <tr>
-            <th data-col="data_sessao">Sessão/Data <span class="sort-icon">↕</span></th>
+            <th data-col="data_sessao">Sessão / Data <span class="sort-icon">↕</span></th>
             <th data-col="tipo">Matéria <span class="sort-icon">↕</span></th>
             <th data-col="numero">Nº <span class="sort-icon">↕</span></th>
+            <th data-col="ano">Ano <span class="sort-icon">↕</span></th>
             <th data-col="autor">Autor <span class="sort-icon">↕</span></th>
             <th data-col="ementa">Ementa <span class="sort-icon">↕</span></th>
             <th data-col="lei">Lei <span class="sort-icon">↕</span></th>
-            <th data-col="ano">Ano <span class="sort-icon">↕</span></th>
+            <th data-col="ano_lei">Ano Lei <span class="sort-icon">↕</span></th>
             <th data-col="data_sancao">Data Sanção <span class="sort-icon">↕</span></th>
             <th data-col="tema">Tema <span class="sort-icon">↕</span></th>
             <th data-col="calendario">Calendário <span class="sort-icon">↕</span></th>
@@ -391,16 +323,13 @@
         applyFilters();
       } catch (e) {
         console.error(e);
-        document.getElementById("tbody").innerHTML = `<tr><td colspan="17" class="empty">Erro ao carregar dados.json</td></tr>`;
+        document.getElementById("tbody").innerHTML = '<tr><td colspan="18" class="empty">Erro ao carregar dados.json</td></tr>';
       }
     }
 
     function uniqueValues(key) {
       const set = new Set();
-      dados.forEach(d => {
-        const v = d[key];
-        if (v) set.add(v);
-      });
+      dados.forEach(d => { if (d[key] != null && d[key] !== "") set.add(d[key]); });
       return [...set].sort((a, b) => String(a).localeCompare(String(b), "pt-BR"));
     }
 
@@ -416,7 +345,7 @@
     function fillSelect(id, values) {
       const sel = document.getElementById(id);
       const current = sel.value;
-      sel.innerHTML = `<option value="">Todos</option>`;
+      sel.innerHTML = '<option value="">Todos</option>';
       values.forEach(v => {
         const opt = document.createElement("option");
         opt.value = v;
@@ -446,7 +375,7 @@
         if (q) {
           const text = [
             d.ementa, d.autor, d.numero, d.bairro, d.tema,
-            d.secretaria, d.tipo, d.lei, d.calendario
+            d.secretaria, d.tipo, d.lei, d.calendario, d.sessao
           ].join(" ").toLowerCase();
           if (!text.includes(q)) return false;
         }
@@ -465,10 +394,17 @@
         if (typeof va === "number" && typeof vb === "number") {
           return sortAsc ? va - vb : vb - va;
         }
-        va = String(va);
-        vb = String(vb);
-        return sortAsc ? va.localeCompare(vb, "pt-BR") : vb.localeCompare(va, "pt-BR");
+        return sortAsc
+          ? String(va).localeCompare(String(vb), "pt-BR")
+          : String(vb).localeCompare(String(va), "pt-BR");
       });
+    }
+
+    function formatDate(iso) {
+      if (!iso) return "—";
+      const parts = String(iso).split("-");
+      if (parts.length !== 3) return iso;
+      return parts[2] + "/" + parts[1] + "/" + parts[0];
     }
 
     function renderTable() {
@@ -495,28 +431,41 @@
           "Deferida": "status-deferida",
           "Sancionado": "status-sancionado",
           "Em tramitação": "status-tramitacao",
-          "Aprovado": "status-aprovado"
+          "Aprovado": "status-aprovado",
+          "Vetado": "status-vetado"
         }[d.status] || "";
 
-        return `<tr>
-          <td>${d.data_sessao || "—"}</td>
-          <td><span class="badge ${tipoClass}">${d.tipo || "—"}</span></td>
-          <td>${d.numero || "—"}</td>
-          <td>${d.autor || "—"}</td>
-          <td class="ementa-cell" title="${escapeHtml(d.ementa || "")}">${d.ementa || "—"}</td>
-          <td>${d.lei || "—"}</td>
-          <td>${d.ano || "—"}</td>
-          <td>${d.data_sancao || "—"}</td>
-          <td>${d.tema || "—"}</td>
-          <td>${d.calendario || "—"}</td>
-          <td>${d.bairro || "—"}</td>
-          <td>${d.secretaria || "—"}</td>
-          <td>${d.leitura || "—"}</td>
-          <td>${d.primeira_votacao || "—"}</td>
-          <td>${d.segunda_votacao || "—"}</td>
-          <td>${d.votacao_unica || "—"}</td>
-          <td class="${statusClass}">${d.status || "—"}</td>
-        </tr>`;
+        const leiDisplay = d.lei === "Vetado"
+          ? '<span class="lei-vetado">Vetado</span>'
+          : (d.lei || "—");
+
+        const sessaoHtml = (d.sessao || d.data_sessao)
+          ? '<div class="sessao-cell">' +
+              (d.sessao ? '<div class="sessao-nome">' + d.sessao + '</div>' : '') +
+              (d.data_sessao ? '<div class="sessao-data">' + formatDate(d.data_sessao) + '</div>' : '') +
+            '</div>'
+          : "—";
+
+        return '<tr>' +
+          '<td>' + sessaoHtml + '</td>' +
+          '<td><span class="badge ' + tipoClass + '">' + (d.tipo || "—") + '</span></td>' +
+          '<td>' + (d.numero || "—") + '</td>' +
+          '<td>' + (d.ano || "—") + '</td>' +
+          '<td>' + (d.autor || "—") + '</td>' +
+          '<td class="ementa-cell" title="' + escapeHtml(d.ementa || "") + '">' + (d.ementa || "—") + '</td>' +
+          '<td>' + leiDisplay + '</td>' +
+          '<td>' + (d.ano_lei || "—") + '</td>' +
+          '<td>' + formatDate(d.data_sancao) + '</td>' +
+          '<td>' + (d.tema || "—") + '</td>' +
+          '<td>' + (d.calendario || "—") + '</td>' +
+          '<td>' + (d.bairro || "—") + '</td>' +
+          '<td>' + (d.secretaria || "—") + '</td>' +
+          '<td>' + formatDate(d.leitura) + '</td>' +
+          '<td>' + formatDate(d.primeira_votacao) + '</td>' +
+          '<td>' + formatDate(d.segunda_votacao) + '</td>' +
+          '<td>' + formatDate(d.votacao_unica) + '</td>' +
+          '<td class="' + statusClass + '">' + (d.status || "—") + '</td>' +
+        '</tr>';
       }).join("");
     }
 
@@ -524,43 +473,38 @@
       const total = filtered.length;
       const indicacoes = filtered.filter(d => d.tipo === "Indicação").length;
       const projetos = filtered.filter(d => d.tipo === "Projeto de Lei").length;
-      const leis = filtered.filter(d => d.tipo === "Lei").length;
+      const comLei = filtered.filter(d => d.lei && d.lei !== "Vetado").length;
       const deferidas = filtered.filter(d => d.status === "Deferida").length;
 
-      document.getElementById("stats").innerHTML = `
-        <div class="stat-card"><div class="number">${total}</div><div class="label">Total</div></div>
-        <div class="stat-card"><div class="number">${indicacoes}</div><div class="label">Indicações</div></div>
-        <div class="stat-card"><div class="number">${projetos}</div><div class="label">Projetos de Lei</div></div>
-        <div class="stat-card"><div class="number">${leis}</div><div class="label">Leis</div></div>
-        <div class="stat-card"><div class="number">${deferidas}</div><div class="label">Deferidas</div></div>
-      `;
+      document.getElementById("stats").innerHTML =
+        '<div class="stat-card"><div class="number">' + total + '</div><div class="label">Total</div></div>' +
+        '<div class="stat-card"><div class="number">' + indicacoes + '</div><div class="label">Indicações</div></div>' +
+        '<div class="stat-card"><div class="number">' + projetos + '</div><div class="label">Projetos de Lei</div></div>' +
+        '<div class="stat-card"><div class="number">' + comLei + '</div><div class="label">Com Lei</div></div>' +
+        '<div class="stat-card"><div class="number">' + deferidas + '</div><div class="label">Deferidas</div></div>';
     }
 
     function clearFilters() {
       document.getElementById("search").value = "";
-      document.getElementById("filtroTipo").value = "";
-      document.getElementById("filtroAutor").value = "";
-      document.getElementById("filtroTema").value = "";
-      document.getElementById("filtroBairro").value = "";
-      document.getElementById("filtroStatus").value = "";
-      document.getElementById("filtroAno").value = "";
+      ["filtroTipo","filtroAutor","filtroTema","filtroBairro","filtroStatus","filtroAno"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
       applyFilters();
     }
 
     function escapeHtml(str) {
-      return str.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
     }
 
-    // Ordenação por clique no cabeçalho
     document.querySelectorAll("th[data-col]").forEach(th => {
       th.addEventListener("click", () => {
         const col = th.dataset.col;
-        if (sortCol === col) {
-          sortAsc = !sortAsc;
-        } else {
-          sortCol = col;
-          sortAsc = true;
-        }
+        if (sortCol === col) sortAsc = !sortAsc;
+        else { sortCol = col; sortAsc = true; }
         document.querySelectorAll("th").forEach(t => t.classList.remove("sorted"));
         th.classList.add("sorted");
         applyFilters();
@@ -569,9 +513,19 @@
 
     function exportCSV() {
       if (filtered.length === 0) return alert("Nenhum dado para exportar");
-      const headers = ["Sessão/Data","Matéria","Nº","Autor","Ementa","Lei","Ano","Data Sanção","Tema","Calendário","Bairro","Secretaria","Leitura","1ª Vot.","2ª Vot.","Vot. Ún.","Status"];
-      const keys = ["data_sessao","tipo","numero","autor","ementa","lei","ano","data_sancao","tema","calendario","bairro","secretaria","leitura","primeira_votacao","segunda_votacao","votacao_unica","status"];
-      const rows = filtered.map(d => keys.map(k => `"${String(d[k] ?? "").replace(/"/g, '""')}"`).join(","));
+      const headers = [
+        "Sessão","Data Sessão","Matéria","Nº","Ano","Autor","Ementa",
+        "Lei","Ano Lei","Data Sanção","Tema","Calendário","Bairro","Secretaria",
+        "Leitura","1ª Votação","2ª Votação","Votação Única","Status"
+      ];
+      const keys = [
+        "sessao","data_sessao","tipo","numero","ano","autor","ementa",
+        "lei","ano_lei","data_sancao","tema","calendario","bairro","secretaria",
+        "leitura","primeira_votacao","segunda_votacao","votacao_unica","status"
+      ];
+      const rows = filtered.map(d =>
+        keys.map(k => '"' + String(d[k] ?? "").replace(/"/g, '""') + '"').join(",")
+      );
       const csv = [headers.join(","), ...rows].join("\n");
       const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
@@ -582,9 +536,8 @@
       URL.revokeObjectURL(url);
     }
 
-    // Placeholder para importação futura
     function handleFiles(e) {
-      alert("Função de importação de PDF/DOCX será implementada em breve.\nPor enquanto, use o script Python ou me envie os arquivos para eu atualizar o JSON.");
+      alert("Função de importação de PDF/DOCX será implementada em breve.\\nPor enquanto use o script Python ou me envie os arquivos para eu atualizar o JSON.");
       e.target.value = "";
     }
 
