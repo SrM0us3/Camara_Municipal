@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>Câmara de Guapimirim – Projetos e Indicações</title>
   <style>
     :root {
@@ -16,135 +16,171 @@
       --success: #38a169;
       --warning: #d69e2e;
       --danger: #e53e3e;
+      --pin: #dd6b20;
+      --header-h: auto;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
+    html, body { height: 100%; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.4;
-      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
-
     header {
       background: var(--primary);
       color: white;
-      padding: 0.6rem 1.25rem;
+      padding: 0.55rem 1rem;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 0.75rem;
+      gap: 0.5rem;
       box-shadow: 0 2px 6px rgba(0,0,0,0.12);
       flex-shrink: 0;
     }
-
-    header h1 { font-size: 1.1rem; font-weight: 600; }
-    header .subtitle { font-size: 0.78rem; opacity: 0.85; }
-
+    header h1 { font-size: 1.05rem; font-weight: 600; }
+    header .subtitle { font-size: 0.75rem; opacity: 0.85; }
     .container {
-      max-width: 1700px;
+      max-width: 1800px;
       margin: 0 auto;
-      padding: 0.6rem 1rem 0.4rem;
+      padding: 0.5rem 0.75rem 0.35rem;
       flex: 1;
       display: flex;
       flex-direction: column;
       min-height: 0;
       width: 100%;
+      overflow: hidden;
     }
-
     .filters {
       background: var(--card);
       border-radius: 8px;
-      padding: 0.55rem 0.9rem;
-      margin-bottom: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      margin-bottom: 0.4rem;
       box-shadow: 0 1px 3px rgba(0,0,0,0.06);
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: 0.4rem;
       align-items: flex-end;
       flex-shrink: 0;
     }
-
     .filter-group {
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
-      min-width: 110px;
+      gap: 0.15rem;
+      min-width: 100px;
     }
-
     .filter-group label {
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 600;
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.03em;
     }
-
     .filter-group input,
     .filter-group select {
-      padding: 0.35rem 0.5rem;
+      padding: 0.32rem 0.45rem;
       border: 1px solid var(--border);
       border-radius: 5px;
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       background: white;
     }
-
     .filter-group input:focus,
     .filter-group select:focus {
       outline: none;
       border-color: var(--primary-light);
       box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.15);
     }
-
-    .search-box { flex: 1; min-width: 160px; }
-
+    .search-box { flex: 1; min-width: 140px; }
     .btn {
-      padding: 0.4rem 0.85rem;
+      padding: 0.35rem 0.7rem;
       border: none;
       border-radius: 5px;
-      font-size: 0.84rem;
+      font-size: 0.8rem;
       font-weight: 500;
       cursor: pointer;
       transition: background 0.15s;
     }
-
     .btn-primary { background: var(--primary); color: white; }
     .btn-primary:hover { background: var(--primary-light); }
     .btn-outline { background: white; border: 1px solid var(--border); color: var(--text); }
     .btn-outline:hover { background: #edf2f7; }
+    .btn-sm { padding: 0.2rem 0.4rem; font-size: 0.72rem; }
+
+    .toolbar-cols {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      align-items: center;
+      margin-bottom: 0.35rem;
+      flex-shrink: 0;
+      background: var(--card);
+      border-radius: 6px;
+      padding: 0.35rem 0.6rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .toolbar-cols .hint {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-right: 0.35rem;
+    }
+    .col-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      font-size: 0.72rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #edf2f7;
+      cursor: pointer;
+      user-select: none;
+    }
+    .col-chip.on { background: #ebf8ff; border-color: #90cdf4; color: var(--primary); }
+    .col-chip.pin { background: #fffaf0; border-color: #f6ad55; color: var(--pin); }
+    .col-chip input { display: none; }
 
     .stats-row {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.4rem;
+      gap: 0.4rem;
+      margin-bottom: 0.35rem;
       flex-shrink: 0;
     }
-
-    .stats {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-    }
-
+    .stats { display: flex; flex-wrap: wrap; gap: 0.35rem; }
     .stat-card {
       background: var(--card);
       border-radius: 6px;
-      padding: 0.4rem 0.85rem;
+      padding: 0.3rem 0.7rem;
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-      min-width: 85px;
+      min-width: 70px;
     }
-
-    .stat-card .number { font-size: 1.2rem; font-weight: 700; color: var(--primary); }
-    .stat-card .label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; }
+    .stat-card .number { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+    .stat-card .label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; }
+    .stats-vereador {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      padding: 0.3rem 0.55rem;
+      background: #f0fff4;
+      border-radius: 6px;
+      border-left: 3px solid #38a169;
+      align-items: center;
+    }
+    .stats-vereador .vereador-nome {
+      font-weight: 700; color: #276749; margin-right: 0.3rem; font-size: 0.8rem;
+    }
+    .stats-vereador .stat-mini {
+      background: white; border-radius: 5px; padding: 0.2rem 0.45rem;
+      font-size: 0.74rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .stats-vereador .stat-mini strong { color: #276749; font-size: 0.9rem; }
 
     .table-wrapper {
       background: var(--card);
@@ -153,19 +189,13 @@
       overflow: auto;
       flex: 1;
       min-height: 0;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
     }
-
-    table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
-
-    thead {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: #edf2f7;
-    }
-
+    table { width: max-content; min-width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.82rem; }
+    thead { position: sticky; top: 0; z-index: 20; background: #edf2f7; }
     th {
-      padding: 0.65rem 0.7rem;
+      padding: 0.5rem 0.55rem;
       text-align: left;
       font-weight: 600;
       color: var(--primary);
@@ -173,135 +203,118 @@
       white-space: nowrap;
       cursor: pointer;
       user-select: none;
+      background: #edf2f7;
+      position: relative;
     }
-
     th:hover { background: #e2e8f0; }
-    th .sort-icon { margin-left: 3px; opacity: 0.35; font-size: 0.75rem; }
+    th .sort-icon { margin-left: 2px; opacity: 0.35; font-size: 0.7rem; }
     th.sorted .sort-icon { opacity: 1; }
-
+    th .pin-btn {
+      margin-left: 4px;
+      font-size: 0.7rem;
+      opacity: 0.4;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--pin);
+      padding: 0 2px;
+    }
+    th .pin-btn:hover, th.col-pinned .pin-btn { opacity: 1; }
     td {
-      padding: 0.55rem 0.7rem;
+      padding: 0.45rem 0.55rem;
       border-bottom: 1px solid var(--border);
       vertical-align: top;
+      background: #fff;
     }
-
     tr:hover td { background: #f7fafc; }
+    tr.row-pinned td { background: #fffaf0 !important; box-shadow: inset 3px 0 0 var(--pin); }
+    tr.row-pinned:hover td { background: #feebc8 !important; }
+    tr.vereador-destaque td { background: #f0fff4 !important; font-weight: 600; }
+    tr.vereador-destaque:hover td { background: #c6f6d5 !important; }
+    tr.vereador-destaque.row-pinned td { background: #ecfdf5 !important; box-shadow: inset 3px 0 0 var(--pin); }
 
-    .sessao-cell { white-space: nowrap; font-size: 0.82rem; }
-    .sessao-cell .sessao-nome { font-weight: 500; }
-    .sessao-cell .sessao-data { color: var(--muted); font-size: 0.78rem; }
+    /* Colunas fixas (pin) */
+    th.col-pinned, td.col-pinned {
+      position: sticky;
+      z-index: 5;
+      background: #edf2f7;
+    }
+    td.col-pinned { background: #fff; z-index: 4; }
+    tr:hover td.col-pinned { background: #f7fafc; }
+    tr.row-pinned td.col-pinned { background: #fffaf0 !important; }
+    thead th.col-pinned { z-index: 25; background: #e2e8f0; }
 
+    .sessao-cell { white-space: nowrap; font-size: 0.8rem; line-height: 1.25; }
+    .sessao-cell .sessao-nome { font-weight: 600; }
+    .sessao-cell .sessao-data { color: var(--muted); font-size: 0.75rem; }
     .cell-clip {
-      max-width: 220px;
+      max-width: 200px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       cursor: default;
     }
-    .cell-clip.ementa {
-      max-width: 340px;
-    }
+    .cell-clip.ementa { max-width: 300px; }
     .cell-clip:hover {
       white-space: normal;
       overflow: visible;
       background: #fffbeb;
       position: relative;
-      z-index: 5;
+      z-index: 6;
       box-shadow: 0 2px 10px rgba(0,0,0,0.12);
       border-radius: 4px;
     }
-
     .badge {
       display: inline-block;
-      padding: 0.15rem 0.5rem;
+      padding: 0.12rem 0.4rem;
       border-radius: 999px;
-      font-size: 0.71rem;
+      font-size: 0.68rem;
       font-weight: 600;
       white-space: nowrap;
     }
-
-    .badge-indicacao     { background: #ebf8ff; color: #2b6cb0; }
-    .badge-projeto       { background: #faf5ff; color: #6b46c1; }
-    .badge-requerimento  { background: #fffaf0; color: #c05621; }
-    .badge-lei           { background: #f0fff4; color: #276749; }
-    .badge-resolucao     { background: #fefcbf; color: #975a16; }
-
-    .status-deferida     { color: var(--success); font-weight: 600; }
-    .status-sancionado   { color: var(--success); font-weight: 600; }
-    .status-tramitacao   { color: var(--warning); font-weight: 600; }
-    .status-aprovado     { color: var(--primary-light); font-weight: 600; }
-    .status-vetado       { color: var(--danger); font-weight: 600; }
-
+    .badge-indicacao { background: #ebf8ff; color: #2b6cb0; }
+    .badge-projeto { background: #faf5ff; color: #6b46c1; }
+    .badge-requerimento { background: #fffaf0; color: #c05621; }
+    .badge-lei { background: #f0fff4; color: #276749; }
+    .badge-resolucao { background: #fefcbf; color: #975a16; }
+    .status-deferida, .status-sancionado { color: var(--success); font-weight: 600; }
+    .status-tramitacao { color: var(--warning); font-weight: 600; }
+    .status-aprovado { color: var(--primary-light); font-weight: 600; }
+    .status-vetado { color: var(--danger); font-weight: 600; }
     .lei-vetado { color: var(--danger); font-weight: 600; }
-
-    .empty { text-align: center; padding: 3rem; color: var(--muted); }
-
-    tr.vereador-destaque td {
-      background: #f0fff4 !important;
-      font-weight: 600;
+    .empty { text-align: center; padding: 2.5rem; color: var(--muted); }
+    .row-pin-btn {
+      border: none; background: transparent; cursor: pointer;
+      color: var(--muted); font-size: 0.85rem; padding: 0 2px;
     }
-    tr.vereador-destaque:hover td {
-      background: #c6f6d5 !important;
-    }
-
-    .stats-vereador {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      padding: 0.35rem 0.65rem;
-      background: #f0fff4;
-      border-radius: 6px;
-      border-left: 3px solid #38a169;
-      align-items: center;
-    }
-    .stats-vereador .vereador-nome {
-      font-weight: 700;
-      color: #276749;
-      margin-right: 0.4rem;
-      font-size: 0.85rem;
-    }
-    .stats-vereador .stat-mini {
-      background: white;
-      border-radius: 5px;
-      padding: 0.25rem 0.55rem;
-      font-size: 0.78rem;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-    .stats-vereador .stat-mini strong {
-      color: #276749;
-      font-size: 0.95rem;
-    }
-
-    footer {
+    .row-pin-btn.on { color: var(--pin); }
+    .pinned-bar {
       display: none;
+      flex-shrink: 0;
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-radius: 6px;
+      padding: 0.3rem 0.55rem;
+      margin-bottom: 0.35rem;
+      font-size: 0.75rem;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
     }
+    .pinned-bar.show { display: flex; }
 
+    /* Mobile: mantém layout de altura fixa (só a tabela rola) */
     @media (max-width: 768px) {
-      body {
-        height: auto;
-        overflow: auto;
-      }
-      .container {
-        flex: none;
-      }
-      .filters { flex-direction: column; align-items: stretch; }
-      .filter-group { min-width: 100%; }
-      .stats-row {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .table-wrapper {
-        flex: none;
-        max-height: none;
-        overflow: visible;
-      }
-      footer {
-        display: block;
-        text-align: center;
-        padding: 1rem;
-        font-size: 0.75rem;
-        color: var(--muted);
-      }
+      header { padding: 0.45rem 0.65rem; }
+      header h1 { font-size: 0.95rem; }
+      .container { padding: 0.4rem 0.45rem; }
+      .filters { gap: 0.3rem; }
+      .filter-group { min-width: calc(50% - 0.3rem); }
+      .search-box { min-width: 100%; }
+      .toolbar-cols { max-height: 4.5rem; overflow-y: auto; }
+      .stat-card { min-width: 60px; padding: 0.25rem 0.5rem; }
+      .stat-card .number { font-size: 1rem; }
+      .cell-clip, .cell-clip.ementa { max-width: 160px; }
     }
   </style>
 </head>
@@ -309,12 +322,12 @@
   <header>
     <div>
       <h1>Câmara Municipal de Guapimirim</h1>
-      <div class="subtitle">Projetos, Indicações e Leis</div>
+      <div class="subtitle">Projetos, Indicações e Leis · Gabinete do Vereador Nei</div>
     </div>
-    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+    <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
       <button class="btn btn-outline" onclick="exportCSV()">Exportar CSV</button>
-      <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">Importar arquivos</button>
-      <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.json" style="display:none" onchange="handleFiles(event)" />
+      <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">Importar JSON</button>
+      <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFiles(event)" />
     </div>
   </header>
 
@@ -324,38 +337,43 @@
         <label>Buscar</label>
         <input type="text" id="search" placeholder="Ementa, autor, número, bairro..." oninput="applyFilters()" />
       </div>
-
       <div class="filter-group">
         <label>Tipo</label>
         <select id="filtroTipo" onchange="applyFilters()"><option value="">Todos</option></select>
       </div>
-
       <div class="filter-group">
         <label>Autor</label>
         <select id="filtroAutor" onchange="applyFilters()"><option value="">Todos</option></select>
       </div>
-
-      <div class="filter-group">
-        <label>Tema</label>
-        <select id="filtroTema" onchange="applyFilters()"><option value="">Todos</option></select>
-      </div>
-
-      <div class="filter-group">
-        <label>Bairro</label>
-        <select id="filtroBairro" onchange="applyFilters()"><option value="">Todos</option></select>
-      </div>
-
       <div class="filter-group">
         <label>Status</label>
         <select id="filtroStatus" onchange="applyFilters()"><option value="">Todos</option></select>
       </div>
-
       <div class="filter-group">
-        <label>Ano Matéria</label>
-        <select id="filtroAno" onchange="applyFilters()"><option value="">Todos</option></select>
+        <label>Ano</label>
+        <select id="filtroAno" onchange="onAnoChange()"><option value="">Todos</option></select>
       </div>
-
+      <div class="filter-group">
+        <label>Sessão</label>
+        <select id="filtroSessao" onchange="applyFilters()"><option value="">Todas</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Tema</label>
+        <select id="filtroTema" onchange="applyFilters()"><option value="">Todos</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Bairro</label>
+        <select id="filtroBairro" onchange="applyFilters()"><option value="">Todos</option></select>
+      </div>
       <button class="btn btn-outline" onclick="clearFilters()">Limpar</button>
+    </div>
+
+    <div class="toolbar-cols" id="toolbarCols"></div>
+    <div class="pinned-bar" id="pinnedBar">
+      <strong>Linhas fixas:</strong>
+      <span id="pinnedCount">0</span>
+      <button class="btn btn-sm btn-outline" onclick="clearPinnedRows()">Limpar fixas</button>
+      <span class="hint" style="color:var(--muted)">Use o 📌 na linha para fixar e comparar</span>
     </div>
 
     <div class="stats-row">
@@ -363,29 +381,10 @@
       <div class="stats-vereador" id="statsVereador"></div>
     </div>
 
-    <div class="table-wrapper">
-      <table>
+    <div class="table-wrapper" id="tableWrapper">
+      <table id="mainTable">
         <thead>
-          <tr>
-            <th data-col="data_sessao">Sessão / Data <span class="sort-icon">↕</span></th>
-            <th data-col="tipo">Matéria <span class="sort-icon">↕</span></th>
-            <th data-col="numero">Nº <span class="sort-icon">↕</span></th>
-            <th data-col="ano">Ano <span class="sort-icon">↕</span></th>
-            <th data-col="autor">Autor <span class="sort-icon">↕</span></th>
-            <th data-col="ementa">Ementa <span class="sort-icon">↕</span></th>
-            <th data-col="lei">Lei <span class="sort-icon">↕</span></th>
-            <th data-col="ano_lei">Ano Lei <span class="sort-icon">↕</span></th>
-            <th data-col="data_sancao">Data Sanção <span class="sort-icon">↕</span></th>
-            <th data-col="tema">Tema <span class="sort-icon">↕</span></th>
-            <th data-col="calendario">Calendário <span class="sort-icon">↕</span></th>
-            <th data-col="bairro">Bairro <span class="sort-icon">↕</span></th>
-            <th data-col="secretaria">Secretaria <span class="sort-icon">↕</span></th>
-            <th data-col="leitura">Leitura <span class="sort-icon">↕</span></th>
-            <th data-col="primeira_votacao">1ª Vot. <span class="sort-icon">↕</span></th>
-            <th data-col="segunda_votacao">2ª Vot. <span class="sort-icon">↕</span></th>
-            <th data-col="votacao_unica">Vot. Ún. <span class="sort-icon">↕</span></th>
-            <th data-col="status">Status <span class="sort-icon">↕</span></th>
-          </tr>
+          <tr id="theadRow"></tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
@@ -393,32 +392,63 @@
     </div>
   </div>
 
-  <footer>
-    Dados da Câmara Municipal de Guapimirim • App estático (HTML + JSON)
-  </footer>
-
   <script>
+    const COLS = [
+      { id: "pin", label: "📌", sort: null, defaultOn: true, canHide: false, pinable: false },
+      { id: "sessao_data", label: "Sessão / Data", sort: "data_sessao", defaultOn: true, canHide: true, pinable: true },
+      { id: "tipo", label: "Matéria", sort: "tipo", defaultOn: true, canHide: true, pinable: true },
+      { id: "numero", label: "Nº", sort: "numero", defaultOn: true, canHide: true, pinable: true },
+      { id: "ano", label: "Ano", sort: "ano", defaultOn: true, canHide: true, pinable: false },
+      { id: "autor", label: "Autor", sort: "autor", defaultOn: true, canHide: true, pinable: true },
+      { id: "ementa", label: "Ementa", sort: "ementa", defaultOn: true, canHide: true, pinable: false },
+      { id: "lei", label: "Lei", sort: "lei", defaultOn: true, canHide: true, pinable: false },
+      { id: "data_sancao", label: "Data Sanção", sort: "data_sancao", defaultOn: true, canHide: true, pinable: false },
+      { id: "tema", label: "Tema", sort: "tema", defaultOn: false, canHide: true, pinable: false },
+      { id: "calendario", label: "Calendário", sort: "calendario", defaultOn: false, canHide: true, pinable: false },
+      { id: "bairro", label: "Bairro", sort: "bairro", defaultOn: false, canHide: true, pinable: false },
+      { id: "secretaria", label: "Secretaria", sort: "secretaria", defaultOn: false, canHide: true, pinable: false },
+      { id: "leitura", label: "Leitura", sort: "leitura", defaultOn: true, canHide: true, pinable: false },
+      { id: "primeira_votacao", label: "1ª Vot.", sort: "primeira_votacao", defaultOn: true, canHide: true, pinable: false },
+      { id: "segunda_votacao", label: "2ª Vot.", sort: "segunda_votacao", defaultOn: true, canHide: true, pinable: false },
+      { id: "votacao_unica", label: "Vot. Ún.", sort: "votacao_unica", defaultOn: true, canHide: true, pinable: false },
+      { id: "status", label: "Status", sort: "status", defaultOn: true, canHide: true, pinable: true },
+    ];
+
     let dados = [];
     let filtered = [];
     let sortCol = "data_sessao";
     let sortAsc = false;
+    let colVisible = {};
+    let colPinned = {};
+    let rowPinned = new Set(); // ids
+
+    COLS.forEach(c => {
+      colVisible[c.id] = c.defaultOn;
+      colPinned[c.id] = false;
+    });
+    // pin sessão por padrão em telas largas
+    colPinned["sessao_data"] = true;
+    colPinned["tipo"] = true;
+    colPinned["numero"] = true;
 
     async function loadData() {
       try {
         const res = await fetch("dados.json");
         dados = await res.json();
         populateFilters();
+        buildColToolbar();
         applyFilters();
       } catch (e) {
         console.error(e);
-        document.getElementById("tbody").innerHTML = '<tr><td colspan="18" class="empty">Erro ao carregar dados.json</td></tr>';
+        document.getElementById("tbody").innerHTML =
+          '<tr><td class="empty" colspan="20">Erro ao carregar dados.json — use Importar JSON ou publique o arquivo junto do index.html</td></tr>';
       }
     }
 
     function uniqueValues(key) {
       const set = new Set();
       dados.forEach(d => { if (d[key] != null && d[key] !== "") set.add(d[key]); });
-      return [...set].sort((a, b) => String(a).localeCompare(String(b), "pt-BR"));
+      return [...set].sort((a, b) => String(a).localeCompare(String(b), "pt-BR", { numeric: true }));
     }
 
     function populateFilters() {
@@ -428,6 +458,7 @@
       fillSelect("filtroBairro", uniqueValues("bairro"));
       fillSelect("filtroStatus", uniqueValues("status"));
       fillSelect("filtroAno", uniqueValues("ano"));
+      rebuildSessaoFilter();
     }
 
     function fillSelect(id, values) {
@@ -440,7 +471,51 @@
         opt.textContent = v;
         sel.appendChild(opt);
       });
-      sel.value = current;
+      if ([...sel.options].some(o => o.value === current)) sel.value = current;
+    }
+
+    function rebuildSessaoFilter() {
+      const ano = document.getElementById("filtroAno").value;
+      const set = new Set();
+      dados.forEach(d => {
+        if (ano && String(d.ano) !== ano) return;
+        if (d.sessao != null && d.sessao !== "") set.add(Number(d.sessao));
+      });
+      const vals = [...set].sort((a, b) => a - b);
+      const sel = document.getElementById("filtroSessao");
+      const current = sel.value;
+      sel.innerHTML = '<option value="">Todas</option>';
+      vals.forEach(v => {
+        const opt = document.createElement("option");
+        opt.value = String(v);
+        opt.textContent = v + "ª";
+        sel.appendChild(opt);
+      });
+      if ([...sel.options].some(o => o.value === current)) sel.value = current;
+      else sel.value = "";
+    }
+
+    function onAnoChange() {
+      rebuildSessaoFilter();
+      applyFilters();
+    }
+
+    function buildColToolbar() {
+      const bar = document.getElementById("toolbarCols");
+      bar.innerHTML = '<span class="hint">Colunas (toque = mostrar/ocultar · 📌 no cabeçalho = fixar):</span>';
+      COLS.filter(c => c.canHide).forEach(c => {
+        const chip = document.createElement("label");
+        chip.className = "col-chip" + (colVisible[c.id] ? " on" : "") + (colPinned[c.id] ? " pin" : "");
+        chip.innerHTML = '<input type="checkbox" ' + (colVisible[c.id] ? "checked" : "") + ' />' + c.label;
+        chip.querySelector("input").addEventListener("change", (e) => {
+          colVisible[c.id] = e.target.checked;
+          if (!e.target.checked) colPinned[c.id] = false;
+          chip.classList.toggle("on", e.target.checked);
+          chip.classList.toggle("pin", colPinned[c.id]);
+          renderTable();
+        });
+        bar.appendChild(chip);
+      });
     }
 
     function applyFilters() {
@@ -451,6 +526,7 @@
       const bairro = document.getElementById("filtroBairro").value;
       const status = document.getElementById("filtroStatus").value;
       const ano = document.getElementById("filtroAno").value;
+      const sessao = document.getElementById("filtroSessao").value;
 
       filtered = dados.filter(d => {
         if (tipo && d.tipo !== tipo) return false;
@@ -459,7 +535,7 @@
         if (bairro && d.bairro !== bairro) return false;
         if (status && d.status !== status) return false;
         if (ano && String(d.ano) !== ano) return false;
-
+        if (sessao && String(d.sessao) !== sessao) return false;
         if (q) {
           const text = [
             d.ementa, d.autor, d.numero, d.bairro, d.tema,
@@ -470,21 +546,28 @@
         return true;
       });
 
+      // linhas fixas sempre no topo (mesmo se filtradas fora — só se ainda existirem)
       sortData();
       renderTable();
       renderStats();
+      updatePinnedBar();
     }
 
     function sortData() {
       filtered.sort((a, b) => {
+        const ap = rowPinned.has(a.id) ? 0 : 1;
+        const bp = rowPinned.has(b.id) ? 0 : 1;
+        if (ap !== bp) return ap - bp;
         let va = a[sortCol] ?? "";
         let vb = b[sortCol] ?? "";
-        if (typeof va === "number" && typeof vb === "number") {
+        if (sortCol === "numero" || sortCol === "ano" || sortCol === "sessao") {
+          va = Number(va) || 0;
+          vb = Number(vb) || 0;
           return sortAsc ? va - vb : vb - va;
         }
         return sortAsc
-          ? String(va).localeCompare(String(vb), "pt-BR")
-          : String(vb).localeCompare(String(va), "pt-BR");
+          ? String(va).localeCompare(String(vb), "pt-BR", { numeric: true })
+          : String(vb).localeCompare(String(va), "pt-BR", { numeric: true });
       });
     }
 
@@ -498,13 +581,80 @@
     function formatNumber(n) {
       if (n == null || n === "") return "—";
       if (n === "Vetado") return "Vetado";
-      // Add thousand separator with dot (Brazilian style)
       return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function formatSessao(d) {
+      if (!d.sessao && !d.data_sessao) return "—";
+      const nome = d.sessao != null ? (d.sessao + "ª sessão") : "";
+      const data = d.data_sessao ? formatDate(d.data_sessao) : "";
+      return '<div class="sessao-cell">' +
+        (nome ? '<div class="sessao-nome">' + nome + '</div>' : '') +
+        (data ? '<div class="sessao-data">' + data + '</div>' : '') +
+        '</div>';
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function visibleCols() {
+      return COLS.filter(c => colVisible[c.id]);
+    }
+
+    function computePinOffsets() {
+      // larguras aproximadas para sticky left
+      const widths = {
+        pin: 36, sessao_data: 110, tipo: 120, numero: 56, ano: 50,
+        autor: 110, ementa: 280, lei: 70, data_sancao: 90, tema: 100,
+        calendario: 100, bairro: 100, secretaria: 120, leitura: 90,
+        primeira_votacao: 90, segunda_votacao: 90, votacao_unica: 90, status: 100
+      };
+      const left = {};
+      let acc = 0;
+      visibleCols().forEach(c => {
+        if (colPinned[c.id]) {
+          left[c.id] = acc;
+          acc += widths[c.id] || 90;
+        }
+      });
+      return left;
     }
 
     function renderTable() {
       const tbody = document.getElementById("tbody");
       const empty = document.getElementById("empty");
+      const theadRow = document.getElementById("theadRow");
+      const cols = visibleCols();
+      const lefts = computePinOffsets();
+
+      theadRow.innerHTML = cols.map(c => {
+        const pinned = colPinned[c.id];
+        const sorted = c.sort && sortCol === c.sort ? " sorted" : "";
+        const pinCls = pinned ? " col-pinned" : "";
+        const style = pinned ? ' style="left:' + lefts[c.id] + 'px"' : "";
+        const pinBtn = c.pinable
+          ? '<button class="pin-btn" title="Fixar coluna" onclick="event.stopPropagation();toggleColPin(\'' + c.id + '\')">' + (pinned ? "📌" : "📍") + '</button>'
+          : "";
+        const sortIcon = c.sort ? '<span class="sort-icon">↕</span>' : "";
+        return '<th class="' + sorted + pinCls + '" data-col="' + (c.sort || "") + '" data-id="' + c.id + '"' + style + '>' +
+          c.label + sortIcon + pinBtn + '</th>';
+      }).join("");
+
+      theadRow.querySelectorAll("th[data-col]").forEach(th => {
+        if (!th.dataset.col) return;
+        th.addEventListener("click", () => {
+          const col = th.dataset.col;
+          if (!col) return;
+          if (sortCol === col) sortAsc = !sortAsc;
+          else { sortCol = col; sortAsc = true; }
+          applyFilters();
+        });
+      });
 
       if (filtered.length === 0) {
         tbody.innerHTML = "";
@@ -521,7 +671,6 @@
           "Lei": "badge-lei",
           "Projeto de Resolução": "badge-resolucao"
         }[d.tipo] || "badge-indicacao";
-
         const statusClass = {
           "Deferida": "status-deferida",
           "Sancionado": "status-sancionado",
@@ -529,52 +678,86 @@
           "Aprovado": "status-aprovado",
           "Vetado": "status-vetado"
         }[d.status] || "";
-
         const leiDisplay = d.lei === "Vetado"
           ? '<span class="lei-vetado">Vetado</span>'
           : formatNumber(d.lei);
+        const pinned = rowPinned.has(d.id);
+        const rowCls = [
+          isNei(d.autor) ? "vereador-destaque" : "",
+          pinned ? "row-pinned" : ""
+        ].filter(Boolean).join(" ");
 
-        const sessaoHtml = (d.sessao || d.data_sessao)
-          ? '<div class="sessao-cell">' +
-              (d.sessao ? '<div class="sessao-nome">' + d.sessao + '</div>' : '') +
-              (d.data_sessao ? '<div class="sessao-data">' + formatDate(d.data_sessao) + '</div>' : '') +
-            '</div>'
-          : "—";
-
-        function clip(val, extraClass) {
+        function cell(id, html, extraClass) {
+          const pinnedCol = colPinned[id];
+          const cls = (extraClass || "") + (pinnedCol ? " col-pinned" : "");
+          const style = pinnedCol ? ' style="left:' + lefts[id] + 'px"' : "";
+          return '<td class="' + cls.trim() + '"' + style + '>' + html + '</td>';
+        }
+        function clip(id, val, extra) {
           const v = val || "—";
-          const cls = "cell-clip" + (extraClass ? " " + extraClass : "");
-          return '<td class="' + cls + '" title="' + escapeHtml(String(v)) + '">' + v + '</td>';
+          return cell(id, '<span class="cell-clip' + (extra ? " " + extra : "") + '" title="' + escapeHtml(String(v)) + '">' + escapeHtml(String(v)) + '</span>');
         }
 
-        const rowClass = isNei(d.autor) ? ' class="vereador-destaque"' : '';
-        return '<tr' + rowClass + '>' +
-          '<td>' + sessaoHtml + '</td>' +
-          '<td><span class="badge ' + tipoClass + '">' + (d.tipo || "—") + '</span></td>' +
-          '<td>' + formatNumber(d.numero) + '</td>' +
-          '<td>' + (d.ano || "—") + '</td>' +
-          clip(d.autor) +
-          clip(d.ementa, "ementa") +
-          '<td>' + leiDisplay + '</td>' +
-          '<td>' + (d.ano_lei || "—") + '</td>' +
-          '<td>' + formatDate(d.data_sancao) + '</td>' +
-          clip(d.tema) +
-          clip(d.calendario) +
-          clip(d.bairro) +
-          clip(d.secretaria) +
-          '<td>' + formatDate(d.leitura) + '</td>' +
-          '<td>' + formatDate(d.primeira_votacao) + '</td>' +
-          '<td>' + formatDate(d.segunda_votacao) + '</td>' +
-          '<td>' + formatDate(d.votacao_unica) + '</td>' +
-          '<td class="' + statusClass + '">' + (d.status || "—") + '</td>' +
-        '</tr>';
+        const cells = cols.map(c => {
+          switch (c.id) {
+            case "pin":
+              return cell("pin",
+                '<button class="row-pin-btn' + (pinned ? " on" : "") + '" title="Fixar linha" onclick="toggleRowPin(\'' + escapeHtml(d.id) + '\')">' +
+                (pinned ? "📌" : "📍") + '</button>');
+            case "sessao_data": return cell("sessao_data", formatSessao(d));
+            case "tipo": return cell("tipo", '<span class="badge ' + tipoClass + '">' + (d.tipo || "—") + '</span>');
+            case "numero": return cell("numero", formatNumber(d.numero));
+            case "ano": return cell("ano", d.ano || "—");
+            case "autor": return clip("autor", d.autor);
+            case "ementa": return clip("ementa", d.ementa, "ementa");
+            case "lei": return cell("lei", leiDisplay);
+            case "data_sancao": return cell("data_sancao", formatDate(d.data_sancao));
+            case "tema": return clip("tema", d.tema);
+            case "calendario": return clip("calendario", d.calendario);
+            case "bairro": return clip("bairro", d.bairro);
+            case "secretaria": return clip("secretaria", d.secretaria);
+            case "leitura": return cell("leitura", formatDate(d.leitura));
+            case "primeira_votacao": return cell("primeira_votacao", formatDate(d.primeira_votacao));
+            case "segunda_votacao": return cell("segunda_votacao", formatDate(d.segunda_votacao));
+            case "votacao_unica": return cell("votacao_unica", formatDate(d.votacao_unica));
+            case "status": return cell("status", '<span class="' + statusClass + '">' + (d.status || "—") + '</span>');
+            default: return cell(c.id, "—");
+          }
+        }).join("");
+
+        return '<tr class="' + rowCls + '" data-id="' + escapeHtml(d.id) + '">' + cells + '</tr>';
       }).join("");
+    }
+
+    function toggleColPin(id) {
+      if (!colVisible[id]) return;
+      colPinned[id] = !colPinned[id];
+      buildColToolbar();
+      renderTable();
+    }
+
+    function toggleRowPin(id) {
+      if (rowPinned.has(id)) rowPinned.delete(id);
+      else rowPinned.add(id);
+      applyFilters();
+    }
+
+    function clearPinnedRows() {
+      rowPinned.clear();
+      applyFilters();
+    }
+
+    function updatePinnedBar() {
+      const bar = document.getElementById("pinnedBar");
+      const n = rowPinned.size;
+      document.getElementById("pinnedCount").textContent = n;
+      bar.classList.toggle("show", n > 0);
     }
 
     function isNei(autor) {
       if (!autor) return false;
-      const a = autor.toLowerCase();
-      return a === "nei" || a.includes("nei da cesta") || a.includes("josinei");
+      const a = String(autor).toUpperCase();
+      return a === "NEI" || a.includes("NEI DA CESTA") || a.split(" / ").includes("NEI");
     }
 
     function renderStats() {
@@ -587,84 +770,68 @@
       document.getElementById("stats").innerHTML =
         '<div class="stat-card"><div class="number">' + total + '</div><div class="label">Total</div></div>' +
         '<div class="stat-card"><div class="number">' + indicacoes + '</div><div class="label">Indicações</div></div>' +
-        '<div class="stat-card"><div class="number">' + projetos + '</div><div class="label">Projetos de Lei</div></div>' +
+        '<div class="stat-card"><div class="number">' + projetos + '</div><div class="label">Projetos</div></div>' +
         '<div class="stat-card"><div class="number">' + comLei + '</div><div class="label">Com Lei</div></div>' +
         '<div class="stat-card"><div class="number">' + deferidas + '</div><div class="label">Deferidas</div></div>';
 
-      // Stats do vereador Nei
       const neiItems = filtered.filter(d => isNei(d.autor));
-      const neiTotal = neiItems.length;
-      const neiInd = neiItems.filter(d => d.tipo === "Indicação").length;
-      const neiPL = neiItems.filter(d => d.tipo === "Projeto de Lei").length;
-      const neiLei = neiItems.filter(d => d.lei && d.lei !== "Vetado").length;
-      const neiDef = neiItems.filter(d => d.status === "Deferida").length;
-      const neiSanc = neiItems.filter(d => d.status === "Sancionado").length;
-
       document.getElementById("statsVereador").innerHTML =
-        '<span class="vereador-nome">Nei da Cesta Básica</span>' +
-        '<div class="stat-mini"><strong>' + neiTotal + '</strong> matérias</div>' +
-        '<div class="stat-mini"><strong>' + neiInd + '</strong> indicações</div>' +
-        '<div class="stat-mini"><strong>' + neiPL + '</strong> projetos de lei</div>' +
-        '<div class="stat-mini"><strong>' + neiLei + '</strong> com lei</div>' +
-        '<div class="stat-mini"><strong>' + neiSanc + '</strong> sancionados</div>' +
-        '<div class="stat-mini"><strong>' + neiDef + '</strong> deferidas</div>';
+        '<span class="vereador-nome">Nei</span>' +
+        '<div class="stat-mini"><strong>' + neiItems.length + '</strong> matérias</div>' +
+        '<div class="stat-mini"><strong>' + neiItems.filter(d => d.tipo === "Indicação").length + '</strong> ind.</div>' +
+        '<div class="stat-mini"><strong>' + neiItems.filter(d => d.tipo === "Projeto de Lei").length + '</strong> PL</div>' +
+        '<div class="stat-mini"><strong>' + neiItems.filter(d => d.lei && d.lei !== "Vetado").length + '</strong> lei</div>' +
+        '<div class="stat-mini"><strong>' + neiItems.filter(d => d.status === "Sancionado").length + '</strong> sanc.</div>';
     }
 
     function clearFilters() {
       document.getElementById("search").value = "";
-      ["filtroTipo","filtroAutor","filtroTema","filtroBairro","filtroStatus","filtroAno"].forEach(id => {
+      ["filtroTipo","filtroAutor","filtroTema","filtroBairro","filtroStatus","filtroAno","filtroSessao"].forEach(id => {
         document.getElementById(id).value = "";
       });
+      rebuildSessaoFilter();
       applyFilters();
     }
-
-    function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/"/g, "&quot;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-    }
-
-    document.querySelectorAll("th[data-col]").forEach(th => {
-      th.addEventListener("click", () => {
-        const col = th.dataset.col;
-        if (sortCol === col) sortAsc = !sortAsc;
-        else { sortCol = col; sortAsc = true; }
-        document.querySelectorAll("th").forEach(t => t.classList.remove("sorted"));
-        th.classList.add("sorted");
-        applyFilters();
-      });
-    });
 
     function exportCSV() {
       if (filtered.length === 0) return alert("Nenhum dado para exportar");
       const headers = [
         "Sessão","Data Sessão","Matéria","Nº","Ano","Autor","Ementa",
-        "Lei","Ano Lei","Data Sanção","Tema","Calendário","Bairro","Secretaria",
+        "Lei","Data Sanção","Tema","Calendário","Bairro","Secretaria",
         "Leitura","1ª Votação","2ª Votação","Votação Única","Status"
       ];
-      const keys = [
-        "sessao","data_sessao","tipo","numero","ano","autor","ementa",
-        "lei","ano_lei","data_sancao","tema","calendario","bairro","secretaria",
-        "leitura","primeira_votacao","segunda_votacao","votacao_unica","status"
-      ];
-      const rows = filtered.map(d =>
-        keys.map(k => '"' + String(d[k] ?? "").replace(/"/g, '""') + '"').join(",")
-      );
-      const csv = [headers.join(","), ...rows].join("\n");
-      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
+      const rows = filtered.map(d => [
+        d.sessao, d.data_sessao, d.tipo, d.numero, d.ano, d.autor, d.ementa,
+        d.lei, d.data_sancao, d.tema, d.calendario, d.bairro, d.secretaria,
+        d.leitura, d.primeira_votacao, d.segunda_votacao, d.votacao_unica, d.status
+      ].map(v => {
+        const s = v == null ? "" : String(v);
+        return '"' + s.replace(/"/g, '""') + '"';
+      }).join(","));
+      const bom = "\uFEFF";
+      const blob = new Blob([bom + headers.join(",") + "\n" + rows.join("\n")], { type: "text/csv;charset=utf-8" });
       const a = document.createElement("a");
-      a.href = url;
-      a.download = "camara-guapimirim.csv";
+      a.href = URL.createObjectURL(blob);
+      a.download = "materias_guapimirim.csv";
       a.click();
-      URL.revokeObjectURL(url);
     }
 
-    function handleFiles(e) {
-      alert("Função de importação de PDF/DOCX será implementada em breve.\\nPor enquanto use o script Python ou me envie os arquivos para eu atualizar o JSON.");
-      e.target.value = "";
+    function handleFiles(ev) {
+      const file = ev.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          dados = JSON.parse(reader.result);
+          populateFilters();
+          buildColToolbar();
+          applyFilters();
+        } catch (e) {
+          alert("JSON inválido");
+        }
+      };
+      reader.readAsText(file);
+      ev.target.value = "";
     }
 
     loadData();
