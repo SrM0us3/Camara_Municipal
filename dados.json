@@ -15461,12 +15461,12 @@
     "secretaria": null,
     "leitura": "2026-08-04",
     "primeira_votacao": "2026-08-18",
-    "segunda_votacao": null,
+    "segunda_votacao": "2026-08-25",
     "votacao_unica": null,
-    "status": "Em tramitação",
+    "status": "Aprovado",
     "origem_arquivos": {
       "pauta": "PAUTA -19ª SESSÃO ORDINÁRIA  04-08-26.docx",
-      "ordem_dia": "21- ORDEM DO DIA -18-08-2026.docx",
+      "ordem_dia": "22- ORDEM DO DIA -25-08-2026.docx",
       "lei": null
     }
   },
@@ -16406,12 +16406,12 @@
     "secretaria": null,
     "leitura": "2026-08-11",
     "primeira_votacao": "2026-08-18",
-    "segunda_votacao": null,
+    "segunda_votacao": "2026-08-25",
     "votacao_unica": null,
-    "status": "Em tramitação",
+    "status": "Aprovado",
     "origem_arquivos": {
       "pauta": "PAUTA -20ª SESSÃO ORDINÁRIA  11-08-26.docx",
-      "ordem_dia": "21- ORDEM DO DIA -18-08-2026.docx",
+      "ordem_dia": "22- ORDEM DO DIA -25-08-2026.docx",
       "lei": null
     }
   },
@@ -16433,12 +16433,12 @@
     "secretaria": null,
     "leitura": "2026-08-11",
     "primeira_votacao": "2026-08-18",
-    "segunda_votacao": null,
+    "segunda_votacao": "2026-08-25",
     "votacao_unica": null,
-    "status": "Em tramitação",
+    "status": "Aprovado",
     "origem_arquivos": {
       "pauta": "PAUTA -20ª SESSÃO ORDINÁRIA  11-08-26.docx",
-      "ordem_dia": "21- ORDEM DO DIA -18-08-2026.docx",
+      "ordem_dia": "22- ORDEM DO DIA -25-08-2026.docx",
       "lei": null
     }
   },
@@ -16460,12 +16460,12 @@
     "secretaria": null,
     "leitura": "2026-08-11",
     "primeira_votacao": "2026-08-18",
-    "segunda_votacao": null,
+    "segunda_votacao": "2026-08-25",
     "votacao_unica": null,
-    "status": "Em tramitação",
+    "status": "Aprovado",
     "origem_arquivos": {
       "pauta": "PAUTA -20ª SESSÃO ORDINÁRIA  11-08-26.docx",
-      "ordem_dia": "21- ORDEM DO DIA -18-08-2026.docx",
+      "ordem_dia": "22- ORDEM DO DIA -25-08-2026.docx",
       "lei": null
     }
   },
@@ -17485,13 +17485,13 @@
     "bairro": null,
     "secretaria": null,
     "leitura": "2026-08-18",
-    "primeira_votacao": null,
+    "primeira_votacao": "2026-09-01",
     "segunda_votacao": null,
     "votacao_unica": null,
     "status": "Em tramitação",
     "origem_arquivos": {
       "pauta": "PAUTA -21ª SESSÃO ORDINÁRIA  18-08-26.docx",
-      "ordem_dia": null,
+      "ordem_dia": "23- ORDEM DO DIA -01-09-2026.docx",
       "lei": null
     }
   },
@@ -17514,11 +17514,11 @@
     "leitura": "2026-08-18",
     "primeira_votacao": null,
     "segunda_votacao": null,
-    "votacao_unica": null,
-    "status": "Em tramitação",
+    "votacao_unica": "2026-08-25",
+    "status": "Aprovado",
     "origem_arquivos": {
       "pauta": "PAUTA -21ª SESSÃO ORDINÁRIA  18-08-26.docx",
-      "ordem_dia": null,
+      "ordem_dia": "22- ORDEM DO DIA -25-08-2026.docx",
       "lei": null
     }
   },
