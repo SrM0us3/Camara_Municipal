@@ -307,6 +307,32 @@
     .btn-audio:hover { background: #fefcbf; }
     .btn-audio.playing { background: #fed7d7; border-color: #e53e3e; color: #822727; }
     .audio-hint { font-size: 0.68rem; color: var(--muted); }
+
+    /* colunas estreitas */
+    th[data-id="lei"], td.col-lei {
+      width: 4.5rem;
+      max-width: 4.5rem;
+      white-space: nowrap;
+    }
+    th[data-id="numero"], td.col-numero {
+      width: 3.5rem;
+      max-width: 4rem;
+      white-space: nowrap;
+    }
+    th[data-id="ano"], td.col-ano {
+      width: 3.2rem;
+      max-width: 3.5rem;
+      white-space: nowrap;
+    }
+    th[data-id="data_sancao"], td.col-data_sancao,
+    th[data-id="leitura"], td.col-leitura,
+    th[data-id="primeira_votacao"], td.col-primeira_votacao,
+    th[data-id="segunda_votacao"], td.col-segunda_votacao,
+    th[data-id="votacao_unica"], td.col-votacao_unica {
+      width: 5.5rem;
+      max-width: 6rem;
+      white-space: nowrap;
+    }
     .badge {
       display: inline-block;
       padding: 0.12rem 0.4rem;
@@ -856,9 +882,9 @@
 
         function cell(id, html, extraClass, attrs) {
           const pinnedCol = colPinned[id];
-          const cls = (extraClass || "") + (pinnedCol ? " col-pinned" : "");
+          const cls = ("col-" + id + " " + (extraClass || "") + (pinnedCol ? " col-pinned" : "")).trim();
           const style = pinnedCol ? ' style="left:' + lefts[id] + 'px"' : "";
-          return '<td class="' + cls.trim() + '"' + style + (attrs || "") + '>' + html + '</td>';
+          return '<td class="' + cls + '"' + style + (attrs || "") + '>' + html + '</td>';
         }
         function clip(id, val, extra) {
           const v = val || "—";
