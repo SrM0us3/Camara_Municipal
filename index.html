@@ -247,23 +247,66 @@
     .sessao-cell { white-space: nowrap; font-size: 0.8rem; line-height: 1.25; }
     .sessao-cell .sessao-nome { font-weight: 600; }
     .sessao-cell .sessao-data { color: var(--muted); font-size: 0.75rem; }
-    .cell-clip {
+    td.cell-clip {
       max-width: 200px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      cursor: default;
+      cursor: pointer;
     }
-    .cell-clip.ementa { max-width: 300px; }
-    .cell-clip:hover {
+    td.cell-clip.ementa { max-width: 280px; }
+    td.cell-clip.open {
       white-space: normal;
       overflow: visible;
+      max-width: 420px;
       background: #fffbeb;
       position: relative;
       z-index: 6;
       box-shadow: 0 2px 10px rgba(0,0,0,0.12);
       border-radius: 4px;
     }
+    /* ementa expandida: texto + botão embaixo (não cobre o texto) */
+    td.cell-clip.ementa.open {
+      max-width: 440px;
+      white-space: normal;
+    }
+    td.cell-clip.ementa .ementa-text {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    td.cell-clip.ementa.open .ementa-text {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: unset;
+      margin-bottom: 0.35rem;
+    }
+    td.cell-clip.ementa .ementa-audio {
+      display: none;
+      margin-top: 0.25rem;
+      padding-top: 0.3rem;
+      border-top: 1px solid #f6e05e;
+    }
+    td.cell-clip.ementa.open .ementa-audio {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+    .btn-audio {
+      padding: 0.2rem 0.55rem;
+      border: 1px solid #d69e2e;
+      border-radius: 5px;
+      background: #fffff0;
+      color: #744210;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-audio:hover { background: #fefcbf; }
+    .btn-audio.playing { background: #fed7d7; border-color: #e53e3e; color: #822727; }
+    .audio-hint { font-size: 0.68rem; color: var(--muted); }
     .badge {
       display: inline-block;
       padding: 0.12rem 0.4rem;
@@ -303,18 +346,59 @@
     }
     .pinned-bar.show { display: flex; }
 
-    /* Mobile: mantém layout de altura fixa (só a tabela rola) */
+    /* Mobile: lista densa — mais linhas na tela */
     @media (max-width: 768px) {
-      header { padding: 0.45rem 0.65rem; }
-      header h1 { font-size: 0.95rem; }
-      .container { padding: 0.4rem 0.45rem; }
-      .filters { gap: 0.3rem; }
-      .filter-group { min-width: calc(50% - 0.3rem); }
+      header { padding: 0.35rem 0.5rem; }
+      header h1 { font-size: 0.9rem; }
+      header .subtitle { display: none; }
+      header .btn { padding: 0.28rem 0.5rem; font-size: 0.75rem; }
+      .container { padding: 0.3rem 0.35rem; }
+      .filters {
+        gap: 0.25rem;
+        padding: 0.35rem 0.45rem;
+        margin-bottom: 0.25rem;
+      }
+      .filter-group { min-width: calc(50% - 0.25rem); }
+      .filter-group label { font-size: 0.6rem; }
+      .filter-group input, .filter-group select {
+        padding: 0.28rem 0.35rem;
+        font-size: 0.78rem;
+      }
       .search-box { min-width: 100%; }
-      .toolbar-cols { max-height: 4.5rem; overflow-y: auto; }
-      .stat-card { min-width: 60px; padding: 0.25rem 0.5rem; }
-      .stat-card .number { font-size: 1rem; }
-      .cell-clip, .cell-clip.ementa { max-width: 160px; }
+      .toolbar-cols {
+        max-height: 0;
+        overflow: hidden;
+        padding: 0 0.45rem;
+        margin-bottom: 0;
+        opacity: 0;
+        transition: max-height 0.2s, opacity 0.2s, padding 0.2s;
+      }
+      .toolbar-cols.open {
+        max-height: 7rem;
+        overflow-y: auto;
+        padding: 0.3rem 0.45rem;
+        margin-bottom: 0.25rem;
+        opacity: 1;
+      }
+      .stats-row { margin-bottom: 0.25rem; gap: 0.25rem; }
+      .stat-card { min-width: 52px; padding: 0.2rem 0.4rem; }
+      .stat-card .number { font-size: 0.95rem; }
+      .stat-card .label { font-size: 0.58rem; }
+      .stats-vereador { display: none; }
+      table { font-size: 0.75rem; }
+      th { padding: 0.35rem 0.4rem; font-size: 0.72rem; }
+      td { padding: 0.3rem 0.4rem; }
+      .sessao-cell { font-size: 0.72rem; }
+      .sessao-cell .sessao-data { font-size: 0.68rem; }
+      td.cell-clip { max-width: 110px; }
+      td.cell-clip.ementa { max-width: 130px; }
+      td.cell-clip.open, td.cell-clip.ementa.open { max-width: 90vw; }
+      .badge { font-size: 0.62rem; padding: 0.08rem 0.3rem; }
+      .row-pin-btn { font-size: 0.75rem; }
+      /* no mobile, evita várias colunas sticky (come espaço) */
+      th.col-pinned, td.col-pinned {
+        position: static;
+      }
     }
   </style>
 </head>
@@ -366,6 +450,7 @@
         <select id="filtroBairro" onchange="applyFilters()"><option value="">Todos</option></select>
       </div>
       <button class="btn btn-outline" onclick="clearFilters()">Limpar</button>
+      <button class="btn btn-outline" id="btnCols" onclick="toggleColsPanel()">Colunas</button>
     </div>
 
     <div class="toolbar-cols" id="toolbarCols"></div>
@@ -393,26 +478,31 @@
   </div>
 
   <script>
+    // defaultOn = PC | mobileOn = celular (lista mais enxuta)
     const COLS = [
-      { id: "pin", label: "📌", sort: null, defaultOn: true, canHide: false, pinable: false },
-      { id: "sessao_data", label: "Sessão / Data", sort: "data_sessao", defaultOn: true, canHide: true, pinable: true },
-      { id: "tipo", label: "Matéria", sort: "tipo", defaultOn: true, canHide: true, pinable: true },
-      { id: "numero", label: "Nº", sort: "numero", defaultOn: true, canHide: true, pinable: true },
-      { id: "ano", label: "Ano", sort: "ano", defaultOn: true, canHide: true, pinable: false },
-      { id: "autor", label: "Autor", sort: "autor", defaultOn: true, canHide: true, pinable: true },
-      { id: "ementa", label: "Ementa", sort: "ementa", defaultOn: true, canHide: true, pinable: false },
-      { id: "lei", label: "Lei", sort: "lei", defaultOn: true, canHide: true, pinable: false },
-      { id: "data_sancao", label: "Data Sanção", sort: "data_sancao", defaultOn: true, canHide: true, pinable: false },
-      { id: "tema", label: "Tema", sort: "tema", defaultOn: false, canHide: true, pinable: false },
-      { id: "calendario", label: "Calendário", sort: "calendario", defaultOn: false, canHide: true, pinable: false },
-      { id: "bairro", label: "Bairro", sort: "bairro", defaultOn: false, canHide: true, pinable: false },
-      { id: "secretaria", label: "Secretaria", sort: "secretaria", defaultOn: false, canHide: true, pinable: false },
-      { id: "leitura", label: "Leitura", sort: "leitura", defaultOn: true, canHide: true, pinable: false },
-      { id: "primeira_votacao", label: "1ª Vot.", sort: "primeira_votacao", defaultOn: true, canHide: true, pinable: false },
-      { id: "segunda_votacao", label: "2ª Vot.", sort: "segunda_votacao", defaultOn: true, canHide: true, pinable: false },
-      { id: "votacao_unica", label: "Vot. Ún.", sort: "votacao_unica", defaultOn: true, canHide: true, pinable: false },
-      { id: "status", label: "Status", sort: "status", defaultOn: true, canHide: true, pinable: true },
+      { id: "pin", label: "📌", sort: null, defaultOn: true, mobileOn: false, canHide: false, pinable: false },
+      { id: "sessao_data", label: "Sessão / Data", sort: "data_sessao", defaultOn: true, mobileOn: true, canHide: true, pinable: true },
+      { id: "tipo", label: "Matéria", sort: "tipo", defaultOn: true, mobileOn: true, canHide: true, pinable: true },
+      { id: "numero", label: "Nº", sort: "numero", defaultOn: true, mobileOn: true, canHide: true, pinable: true },
+      { id: "ano", label: "Ano", sort: "ano", defaultOn: true, mobileOn: false, canHide: true, pinable: false },
+      { id: "autor", label: "Autor", sort: "autor", defaultOn: true, mobileOn: true, canHide: true, pinable: true },
+      { id: "ementa", label: "Ementa", sort: "ementa", defaultOn: true, mobileOn: true, canHide: true, pinable: false },
+      { id: "lei", label: "Lei", sort: "lei", defaultOn: true, mobileOn: false, canHide: true, pinable: false },
+      { id: "data_sancao", label: "Data Sanção", sort: "data_sancao", defaultOn: true, mobileOn: false, canHide: true, pinable: false },
+      { id: "tema", label: "Tema", sort: "tema", defaultOn: false, mobileOn: false, canHide: true, pinable: false },
+      { id: "calendario", label: "Calendário", sort: "calendario", defaultOn: false, mobileOn: false, canHide: true, pinable: false },
+      { id: "bairro", label: "Bairro", sort: "bairro", defaultOn: false, mobileOn: false, canHide: true, pinable: false },
+      { id: "secretaria", label: "Secretaria", sort: "secretaria", defaultOn: false, mobileOn: false, canHide: true, pinable: false },
+      { id: "leitura", label: "Leitura", sort: "leitura", defaultOn: true, mobileOn: false, canHide: true, pinable: false },
+      { id: "primeira_votacao", label: "1ª Vot.", sort: "primeira_votacao", defaultOn: true, mobileOn: false, canHide: true, pinable: false },
+      { id: "segunda_votacao", label: "2ª Vot.", sort: "segunda_votacao", defaultOn: true, mobileOn: false, canHide: true, pinable: false },
+      { id: "votacao_unica", label: "Vot. Ún.", sort: "votacao_unica", defaultOn: true, mobileOn: false, canHide: true, pinable: false },
+      { id: "status", label: "Status", sort: "status", defaultOn: true, mobileOn: true, canHide: true, pinable: true },
     ];
+
+    function isMobile() {
+      return window.matchMedia("(max-width: 768px)").matches;
+    }
 
     let dados = [];
     let filtered = [];
@@ -420,16 +510,21 @@
     let sortAsc = false;
     let colVisible = {};
     let colPinned = {};
-    let rowPinned = new Set(); // ids
+    let rowPinned = new Set();
 
-    COLS.forEach(c => {
-      colVisible[c.id] = c.defaultOn;
-      colPinned[c.id] = false;
-    });
-    // pin sessão por padrão em telas largas
-    colPinned["sessao_data"] = true;
-    colPinned["tipo"] = true;
-    colPinned["numero"] = true;
+    function initColumns() {
+      const mobile = isMobile();
+      COLS.forEach(c => {
+        colVisible[c.id] = mobile ? !!c.mobileOn : !!c.defaultOn;
+        colPinned[c.id] = false;
+      });
+      if (!mobile) {
+        colPinned["sessao_data"] = true;
+        colPinned["tipo"] = true;
+        colPinned["numero"] = true;
+      }
+    }
+    initColumns();
 
     async function loadData() {
       try {
@@ -500,9 +595,81 @@
       applyFilters();
     }
 
+    function toggleColsPanel() {
+      const bar = document.getElementById("toolbarCols");
+      if (isMobile()) {
+        bar.classList.toggle("open");
+      } else {
+        bar.style.display = bar.style.display === "none" ? "flex" : "none";
+      }
+    }
+
+    let _utterance = null;
+
+    function stopSpeak() {
+      if (window.speechSynthesis) speechSynthesis.cancel();
+      _utterance = null;
+      document.querySelectorAll(".btn-audio.playing").forEach(btn => {
+        btn.classList.remove("playing");
+        btn.textContent = "▶ Ouvir";
+      });
+    }
+
+    function toggleEmenta(td) {
+      const opening = !td.classList.contains("open");
+      // fecha outras ementas abertas
+      document.querySelectorAll("td.cell-clip.ementa.open").forEach(el => {
+        if (el !== td) el.classList.remove("open");
+      });
+      if (!opening) stopSpeak();
+      td.classList.toggle("open", opening);
+    }
+
+    function toggleSpeak(btn) {
+      if (!window.speechSynthesis) {
+        alert("Seu navegador não suporta leitura em voz alta.");
+        return;
+      }
+      const td = btn.closest("td");
+      const texto = (td && td.getAttribute("data-ementa")) || "";
+      if (!texto || texto === "—") return;
+
+      if (btn.classList.contains("playing")) {
+        stopSpeak();
+        return;
+      }
+
+      stopSpeak();
+      _utterance = new SpeechSynthesisUtterance(texto);
+      _utterance.lang = "pt-BR";
+      _utterance.rate = 1;
+      _utterance.pitch = 1;
+      // tenta voz em português
+      const voices = speechSynthesis.getVoices();
+      const pt = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("pt"));
+      if (pt) _utterance.voice = pt;
+      _utterance.onend = () => {
+        btn.classList.remove("playing");
+        btn.textContent = "▶ Ouvir";
+      };
+      _utterance.onerror = () => {
+        btn.classList.remove("playing");
+        btn.textContent = "▶ Ouvir";
+      };
+      btn.classList.add("playing");
+      btn.textContent = "⏹ Parar";
+      speechSynthesis.speak(_utterance);
+    }
+
+    // algumas plataformas carregam vozes de forma assíncrona
+    if (window.speechSynthesis) {
+      speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+    }
+
     function buildColToolbar() {
       const bar = document.getElementById("toolbarCols");
-      bar.innerHTML = '<span class="hint">Colunas (toque = mostrar/ocultar · 📌 no cabeçalho = fixar):</span>';
+      bar.innerHTML = '<span class="hint">Colunas (toque = mostrar/ocultar · 📌 no cabeçalho = fixar no PC):</span>';
       COLS.filter(c => c.canHide).forEach(c => {
         const chip = document.createElement("label");
         chip.className = "col-chip" + (colVisible[c.id] ? " on" : "") + (colPinned[c.id] ? " pin" : "");
@@ -687,15 +854,37 @@
           pinned ? "row-pinned" : ""
         ].filter(Boolean).join(" ");
 
-        function cell(id, html, extraClass) {
+        function cell(id, html, extraClass, attrs) {
           const pinnedCol = colPinned[id];
           const cls = (extraClass || "") + (pinnedCol ? " col-pinned" : "");
           const style = pinnedCol ? ' style="left:' + lefts[id] + 'px"' : "";
-          return '<td class="' + cls.trim() + '"' + style + '>' + html + '</td>';
+          return '<td class="' + cls.trim() + '"' + style + (attrs || "") + '>' + html + '</td>';
         }
         function clip(id, val, extra) {
           const v = val || "—";
-          return cell(id, '<span class="cell-clip' + (extra ? " " + extra : "") + '" title="' + escapeHtml(String(v)) + '">' + escapeHtml(String(v)) + '</span>');
+          const cls = "cell-clip" + (extra ? " " + extra : "");
+          return cell(
+            id,
+            escapeHtml(String(v)),
+            cls,
+            ' title="' + escapeHtml(String(v)) + '" onclick="this.classList.toggle(\'open\')"'
+          );
+        }
+        function ementaCell(val) {
+          const v = val || "—";
+          const safe = escapeHtml(String(v));
+          const html =
+            '<span class="ementa-text">' + safe + '</span>' +
+            '<div class="ementa-audio" onclick="event.stopPropagation()">' +
+              '<button type="button" class="btn-audio" onclick="toggleSpeak(this)">▶ Ouvir</button>' +
+              '<span class="audio-hint">voz do aparelho</span>' +
+            '</div>';
+          return cell(
+            "ementa",
+            html,
+            "cell-clip ementa",
+            ' title="' + safe + '" data-ementa="' + safe + '" onclick="toggleEmenta(this)"'
+          );
         }
 
         const cells = cols.map(c => {
@@ -709,7 +898,7 @@
             case "numero": return cell("numero", formatNumber(d.numero));
             case "ano": return cell("ano", d.ano || "—");
             case "autor": return clip("autor", d.autor);
-            case "ementa": return clip("ementa", d.ementa, "ementa");
+            case "ementa": return ementaCell(d.ementa);
             case "lei": return cell("lei", leiDisplay);
             case "data_sancao": return cell("data_sancao", formatDate(d.data_sancao));
             case "tema": return clip("tema", d.tema);
