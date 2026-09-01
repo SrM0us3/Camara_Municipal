@@ -412,7 +412,12 @@
         padding: 0.2rem 0.25rem;
         font-size: 0.72rem;
       }
-      .search-box { min-width: 100%; }
+      .search-box,
+      .filter-autor { min-width: 100%; flex: 1 1 100%; }
+      .filter-main {
+        min-width: calc(33.33% - 0.2rem);
+        flex: 1 1 calc(33.33% - 0.2rem);
+      }
       .filters .filter-extra { display: none; }
       .filters.show-extra .filter-extra { display: flex; }
       .filters-actions {
@@ -476,21 +481,21 @@
         <label>Buscar</label>
         <input type="text" id="search" placeholder="Ementa, autor, número..." oninput="applyFilters()" />
       </div>
-      <div class="filter-group">
+      <div class="filter-group filter-autor">
+        <label>Autor</label>
+        <select id="filtroAutor" onchange="applyFilters()"><option value="">Todos</option></select>
+      </div>
+      <div class="filter-group filter-main">
         <label>Tipo</label>
         <select id="filtroTipo" onchange="applyFilters()"><option value="">Todos</option></select>
       </div>
-      <div class="filter-group">
-        <label>Ano</label>
-        <select id="filtroAno" onchange="onAnoChange()"><option value="">Todos</option></select>
-      </div>
-      <div class="filter-group">
+      <div class="filter-group filter-main">
         <label>Sessão</label>
         <select id="filtroSessao" onchange="applyFilters()"><option value="">Todas</option></select>
       </div>
-      <div class="filter-group filter-extra">
-        <label>Autor</label>
-        <select id="filtroAutor" onchange="applyFilters()"><option value="">Todos</option></select>
+      <div class="filter-group filter-main">
+        <label>Ano</label>
+        <select id="filtroAno" onchange="onAnoChange()"><option value="">Todos</option></select>
       </div>
       <div class="filter-group filter-extra">
         <label>Status</label>
