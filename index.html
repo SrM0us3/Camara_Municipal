@@ -321,8 +321,20 @@
     /* colunas estreitas */
     th[data-id="lei"], td.col-lei {
       width: 4.5rem;
-      max-width: 4.5rem;
+      max-width: 5.5rem;
       white-space: nowrap;
+    }
+    td.col-lei .lei-multi {
+      display: flex;
+      flex-direction: column;
+      gap: 0.12rem;
+      line-height: 1.2;
+    }
+    td.col-lei .lei-multi span { display: block; white-space: nowrap; }
+    td.col-lei.has-multi {
+      max-width: 6.5rem;
+      width: auto;
+      white-space: normal;
     }
     th[data-id="numero"], td.col-numero {
       width: 3.5rem;
@@ -797,6 +809,16 @@
       return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
+    function formatLei(lei) {
+      if (lei == null || lei === "") return "—";
+      if (lei === "Vetado") return '<span class="lei-vetado">Vetado</span>';
+      const partes = String(lei).split(/\s*;\s*/).map(s => s.trim()).filter(Boolean);
+      if (partes.length <= 1) return formatNumber(partes[0] || lei);
+      return '<div class="lei-multi" title="' + escapeHtml(partes.join(" / ")) + '">' +
+        partes.map(p => '<span>' + formatNumber(p) + '</span>').join("") +
+        '</div>';
+    }
+
     function formatSessao(d) {
       if (!d.sessao && !d.data_sessao) return "—";
       const nome = d.sessao != null ? (d.sessao + "ª sessão") : "";
@@ -922,9 +944,8 @@
           "Aprovado": "status-aprovado",
           "Vetado": "status-vetado"
         }[d.status] || "";
-        const leiDisplay = d.lei === "Vetado"
-          ? '<span class="lei-vetado">Vetado</span>'
-          : formatNumber(d.lei);
+        const leiDisplay = formatLei(d.lei);
+        const leiMultiClass = (d.lei && String(d.lei).includes(";")) ? " has-multi" : "";
         const pinned = rowPinned.has(d.id);
         const rowCls = [
           isNei(d.autor) ? "vereador-destaque" : "",
@@ -976,7 +997,7 @@
             case "ano": return cell("ano", d.ano || "—");
             case "autor": return clip("autor", d.autor);
             case "ementa": return ementaCell(d.ementa);
-            case "lei": return cell("lei", leiDisplay);
+            case "lei": return cell("lei", leiDisplay, leiMultiClass.trim());
             case "data_sancao": return cell("data_sancao", formatDate(d.data_sancao));
             case "tema": return clip("tema", d.tema);
             case "calendario": return clip("calendario", d.calendario);
