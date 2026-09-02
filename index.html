@@ -368,6 +368,8 @@
     .badge-requerimento { background: #fffaf0; color: #c05621; }
     .badge-lei { background: #f0fff4; color: #276749; }
     .badge-resolucao { background: #fefcbf; color: #975a16; }
+    .badge-emenda { background: #e9d8fd; color: #553c9a; }
+    .badge-oficio { background: #e6fffa; color: #234e52; }
     .status-deferida, .status-sancionado { color: var(--success); font-weight: 600; }
     .status-tramitacao { color: var(--warning); font-weight: 600; }
     .status-aprovado { color: var(--primary-light); font-weight: 600; }
@@ -826,11 +828,17 @@
 
     function formatSessao(d) {
       if (!d.sessao && !d.data_sessao) return "—";
-      const nome = d.sessao != null ? (d.sessao + "ª sessão") : "";
+      const tipoS = d.tipo_sessao || "Ordinária";
+      const nome = d.sessao != null
+        ? (d.sessao + "ª " + (tipoS === "Extraordinária" ? "Extraord." : "sessão"))
+        : "";
       const data = d.data_sessao ? formatDate(d.data_sessao) : "";
+      const extra = (tipoS === "Extraordinária" && d.sessao != null)
+        ? ""
+        : (tipoS === "Extraordinária" ? '<div class="sessao-data">Extraordinária</div>' : "");
       return '<div class="sessao-cell">' +
         (nome ? '<div class="sessao-nome">' + nome + '</div>' : '') +
-        (data ? '<div class="sessao-data">' + data + '</div>' : '') +
+        (data ? '<div class="sessao-data">' + data + (tipoS === "Extraordinária" ? " · Extr." : "") + '</div>' : extra) +
         '</div>';
     }
 
@@ -935,13 +943,21 @@
       empty.style.display = "none";
 
       tbody.innerHTML = filtered.map(d => {
-        const tipoClass = {
-          "Indicação": "badge-indicacao",
-          "Projeto de Lei": "badge-projeto",
-          "Requerimento": "badge-requerimento",
-          "Lei": "badge-lei",
-          "Projeto de Resolução": "badge-resolucao"
-        }[d.tipo] || "badge-indicacao";
+        const tipoClass = (() => {
+          const t = d.tipo || "";
+          if (t.includes("Emenda")) return "badge-emenda";
+          if (t.includes("Veto") || t === "Mensagem") return "badge-requerimento";
+          if (t === "Parecer" || t === "Balancete" || t === "Prestação de Contas" || t === "Processo Administrativo")
+            return "badge-oficio";
+          return {
+            "Indicação": "badge-indicacao",
+            "Projeto de Lei": "badge-projeto",
+            "Requerimento": "badge-requerimento",
+            "Lei": "badge-lei",
+            "Projeto de Resolução": "badge-resolucao",
+            "Ofício": "badge-oficio"
+          }[t] || "badge-indicacao";
+        })();
         const statusClass = {
           "Deferida": "status-deferida",
           "Sancionado": "status-sancionado",
