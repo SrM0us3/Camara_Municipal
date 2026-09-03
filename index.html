@@ -634,21 +634,59 @@
       if ([...sel.options].some(o => o.value === current)) sel.value = current;
     }
 
+    function chaveSessao(d) {
+      // separa ordinária e extraordinária (ex: "O|1" e "E|1")
+      const tipo = (d.tipo_sessao === "Extraordinária") ? "E" : "O";
+      const n = (d.sessao != null && d.sessao !== "") ? String(d.sessao) : "";
+      if (!n) return null;
+      return tipo + "|" + n;
+    }
+
+    function numSessao2(n) {
+      const x = parseInt(n, 10);
+      if (isNaN(x)) return String(n || "");
+      return String(x).padStart(2, "0");
+    }
+
+    function labelSessao(chave, dataRef) {
+      // chave "O|12" → "12 Ordinária"
+      const parts = String(chave).split("|");
+      if (parts.length !== 2) return chave;
+      const tipo = parts[0] === "E" ? "Extraordinária" : "Ordinária";
+      const n = numSessao2(parts[1]);
+      const data = dataRef ? (" · " + formatDate(dataRef)) : "";
+      return n + " " + tipo + data;
+    }
+
     function rebuildSessaoFilter() {
       const ano = document.getElementById("filtroAno").value;
-      const set = new Set();
+      // mapa chave → data mais antiga (para rótulo)
+      const map = new Map();
       dados.forEach(d => {
         if (ano && String(d.ano) !== ano) return;
-        if (d.sessao != null && d.sessao !== "") set.add(Number(d.sessao));
+        // filtrar sessão pelo ano da sessão (data_sessao), se houver
+        if (ano && d.data_sessao && !String(d.data_sessao).startsWith(String(ano))) {
+          // ainda permite se o ano da matéria for o filtrado
+        }
+        const k = chaveSessao(d);
+        if (!k) return;
+        const dt = d.data_sessao || "";
+        if (!map.has(k) || (dt && dt < map.get(k))) map.set(k, dt);
       });
-      const vals = [...set].sort((a, b) => a - b);
+      // ordena: ordinárias depois extraordinárias; por número
+      const vals = [...map.keys()].sort((a, b) => {
+        const [ta, na] = a.split("|");
+        const [tb, nb] = b.split("|");
+        if (ta !== tb) return ta === "O" ? -1 : 1;
+        return Number(na) - Number(nb);
+      });
       const sel = document.getElementById("filtroSessao");
       const current = sel.value;
       sel.innerHTML = '<option value="">Todas</option>';
       vals.forEach(v => {
         const opt = document.createElement("option");
-        opt.value = String(v);
-        opt.textContent = v + "ª";
+        opt.value = v;
+        opt.textContent = labelSessao(v, map.get(v));
         sel.appendChild(opt);
       });
       if ([...sel.options].some(o => o.value === current)) sel.value = current;
@@ -767,7 +805,11 @@
         if (bairro && d.bairro !== bairro) return false;
         if (status && d.status !== status) return false;
         if (ano && String(d.ano) !== ano) return false;
-        if (sessao && String(d.sessao) !== sessao) return false;
+        // filtro de sessão separa ordinária x extraordinária
+        if (sessao) {
+          const k = chaveSessao(d);
+          if (k !== sessao) return false;
+        }
         if (q) {
           const text = [
             d.ementa, d.autor, d.numero, d.bairro, d.tema,
@@ -830,15 +872,12 @@
       if (!d.sessao && !d.data_sessao) return "—";
       const tipoS = d.tipo_sessao || "Ordinária";
       const nome = d.sessao != null
-        ? (d.sessao + "ª " + (tipoS === "Extraordinária" ? "Extraord." : "sessão"))
-        : "";
+        ? (numSessao2(d.sessao) + " " + tipoS)
+        : tipoS;
       const data = d.data_sessao ? formatDate(d.data_sessao) : "";
-      const extra = (tipoS === "Extraordinária" && d.sessao != null)
-        ? ""
-        : (tipoS === "Extraordinária" ? '<div class="sessao-data">Extraordinária</div>' : "");
       return '<div class="sessao-cell">' +
         (nome ? '<div class="sessao-nome">' + nome + '</div>' : '') +
-        (data ? '<div class="sessao-data">' + data + (tipoS === "Extraordinária" ? " · Extr." : "") + '</div>' : extra) +
+        (data ? '<div class="sessao-data">' + data + '</div>' : '') +
         '</div>';
     }
 
