@@ -155708,34 +155708,6 @@
     }
   },
   {
-    "id": "pl-1506-2021",
-    "sessao": 3,
-    "tipo_sessao": "Ordinária",
-    "data_sessao": "2021-03-02",
-    "tipo": "Projeto de Lei",
-    "numero": "1506",
-    "ano": 2021,
-    "autor": "NEI",
-    "ementa": "Dispõe sobre o monitoramento remoto dos munícipes diagnosticados com o (COVID-19) em situação de isolamento domiciliar no município de Guapimirim.",
-    "texto_completo": null,
-    "lei": "1229",
-    "data_sancao": null,
-    "tema": "Saúde",
-    "calendario": null,
-    "bairro": null,
-    "secretaria": null,
-    "leitura": "2021-02-22",
-    "primeira_votacao": null,
-    "segunda_votacao": "2021-03-09",
-    "votacao_unica": null,
-    "status": "Sancionado",
-    "origem_arquivos": {
-      "pauta": "PAUTA -03ª SESSÃO ORDINÁRIA 02-03-21.docx",
-      "ordem_dia": "04- ORDEM DO DIA -09-03-2021- COM PMG.docx",
-      "lei": null
-    }
-  },
-  {
     "id": "pl-1507-2021",
     "sessao": 3,
     "tipo_sessao": "Ordinária",
