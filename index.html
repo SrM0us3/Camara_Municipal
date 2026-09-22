@@ -1012,14 +1012,23 @@
       const ranked = inds
         .map(d => ({ d, score: similaridadeTexto(texto, d.ementa || "") }))
         .filter(x => x.score >= 0.15)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 10);
-      if (!ranked.length) {
-        box.innerHTML = '<div class="similar-item">Nenhuma indicação bem parecida no JSON' +
+        .sort((a, b) => b.score - a.score);
+      const total = ranked.length;
+      const mostrar = ranked.slice(0, 10);
+      if (!total) {
+        box.innerHTML =
+          '<div class="similar-item meta"><strong>0</strong> semelhantes encontradas' +
           (sec ? " para esta secretaria" : "") + ".</div>";
         return;
       }
-      box.innerHTML = ranked.map(({ d, score }) =>
+      const resumo =
+        '<div class="similar-item meta" style="background:#ebf8ff;border-color:#90cdf4;">' +
+          '<strong>' + total + '</strong> semelhante' + (total === 1 ? "" : "s") +
+          " encontrada" + (total === 1 ? "" : "s") +
+          (total > 10 ? " · mostrando as 10 mais próximas" : "") +
+          (sec ? " · filtro: " + escapeHtml(sec) : "") +
+        "</div>";
+      box.innerHTML = resumo + mostrar.map(({ d, score }) =>
         '<div class="similar-item"><div class="meta">Indicação ' + escapeHtml(String(d.numero)) +
         "/" + escapeHtml(String(d.ano || "")) +
         " · " + escapeHtml(d.autor || "—") +
