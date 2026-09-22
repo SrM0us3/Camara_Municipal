@@ -954,12 +954,22 @@
       return parts.join("  -  ");
     }
 
+    function chaveSessaoAno(d) {
+      // inclui o ano da sessão para não misturar 01ª/2021 com 01ª/2026
+      const tipo = (d.tipo_sessao === "Extraordinária") ? "E" : "O";
+      const n = (d.sessao != null && d.sessao !== "") ? String(d.sessao) : "";
+      if (!n) return null;
+      const ano = (d.data_sessao && String(d.data_sessao).slice(0, 4)) || String(d.ano || "");
+      if (!ano) return tipo + "|" + n;
+      return tipo + "|" + n + "|" + ano;
+    }
+
     function openExportModal() {
       const box = document.getElementById("exportSessList");
       if (!box) return;
       const map = new Map();
       dados.forEach(d => {
-        const k = chaveSessao(d);
+        const k = chaveSessaoAno(d);
         if (!k) return;
         if (!map.has(k)) {
           map.set(k, {
@@ -998,7 +1008,7 @@
         return;
       }
       const rows = dados.filter(d => {
-        const k = chaveSessao(d);
+        const k = chaveSessaoAno(d);
         return k && selected.has(k);
       });
       if (!rows.length) {
