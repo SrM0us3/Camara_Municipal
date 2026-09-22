@@ -517,7 +517,20 @@
       font: inherit;
       resize: vertical;
     }
-    .similar-list { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.5rem; }
+    .similar-list { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.5rem; max-height: 220px; overflow: auto; }
+    #indSlots {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+    @media (min-width: 960px) {
+      #indSlots {
+        grid-template-columns: repeat(3, 1fr);
+        align-items: start;
+      }
+      #indSlots .panel-card { margin-bottom: 0 !important; }
+      #indSlots textarea { min-height: 90px; }
+    }
     .similar-item {
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -963,6 +976,24 @@
       renderIndSimilar(n);
     }
 
+    function secretariaEscolhida(n) {
+      const p2 = document.getElementById("indPref2_" + n);
+      return (p2 && p2.value) ? String(p2.value).toLowerCase() : "";
+    }
+
+    function ementaTemOutraSecretaria(ementa, secEscolhida) {
+      // se escolheu uma secretaria, exclui ementas cuja 1ª secretaria citada é outra
+      if (!secEscolhida || !ementa) return false;
+      const e = String(ementa).toLowerCase();
+      const m = e.match(/secretaria municipal de\s+([^,\.\n]+)/i);
+      if (!m) return false;
+      const trecho = m[1].trim();
+      if (trecho.includes(secEscolhida) || secEscolhida.includes(trecho.slice(0, 24))) {
+        return false; // mesma secretaria — pode entrar na lista
+      }
+      return true; // outra secretaria — não entra
+    }
+
     function renderIndSimilar(n) {
       const box = document.getElementById("indSimilar" + n);
       const texto = montarTextoIndicacao(n);
@@ -971,9 +1002,12 @@
         box.innerHTML = '<div class="similar-item meta">Digite a indicação para ver semelhantes…</div>';
         return;
       }
+      const sec = secretariaEscolhida(n);
       const inds = dados.filter(d => {
         const t = (d.tipo || "").toLowerCase();
-        return t.includes("indica");
+        if (!t.includes("indica")) return false;
+        if (sec && ementaTemOutraSecretaria(d.ementa, sec)) return false;
+        return true;
       });
       const ranked = inds
         .map(d => ({ d, score: similaridadeTexto(texto, d.ementa || "") }))
@@ -981,7 +1015,8 @@
         .sort((a, b) => b.score - a.score)
         .slice(0, 10);
       if (!ranked.length) {
-        box.innerHTML = '<div class="similar-item">Nenhuma indicação bem parecida no JSON.</div>';
+        box.innerHTML = '<div class="similar-item">Nenhuma indicação bem parecida no JSON' +
+          (sec ? " para esta secretaria" : "") + ".</div>";
         return;
       }
       box.innerHTML = ranked.map(({ d, score }) =>
