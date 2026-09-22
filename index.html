@@ -304,7 +304,7 @@
       gap: 0.35rem;
       flex-wrap: wrap;
     }
-    .btn-audio {
+    .btn-audio, .btn-copy {
       padding: 0.2rem 0.55rem;
       border: 1px solid #d69e2e;
       border-radius: 5px;
@@ -314,8 +314,11 @@
       font-weight: 600;
       cursor: pointer;
     }
-    .btn-audio:hover { background: #fefcbf; }
+    .btn-audio:hover, .btn-copy:hover { background: #fefcbf; }
     .btn-audio.playing { background: #fed7d7; border-color: #e53e3e; color: #822727; }
+    .btn-copy { border-color: #3182ce; background: #ebf8ff; color: #2c5282; }
+    .btn-copy:hover { background: #bee3f8; }
+    .btn-copy.copied { background: #c6f6d5; border-color: #38a169; color: #22543d; }
     .audio-hint { font-size: 0.68rem; color: var(--muted); }
 
     /* colunas estreitas */
@@ -462,7 +465,95 @@
         box-shadow: none;
       }
     }
+
+    /* abas */
+    .tabs {
+      display: flex;
+      gap: 0.25rem;
+      padding: 0.35rem 0.75rem 0;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .tab-btn {
+      border: 1px solid transparent;
+      border-bottom: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px 8px 0 0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--bg);
+      color: var(--primary);
+      border-color: var(--border);
+    }
+    .panel { display: none; flex: 1; min-height: 0; flex-direction: column; }
+    .panel.active { display: flex; }
+    .panel-body {
+      padding: 0.75rem;
+      overflow: auto;
+      flex: 1;
+      min-height: 0;
+    }
+    .panel-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+    .panel-card h2 { font-size: 1rem; margin-bottom: 0.5rem; color: var(--primary); }
+    .panel-card textarea {
+      width: 100%;
+      min-height: 110px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.55rem 0.65rem;
+      font: inherit;
+      resize: vertical;
+    }
+    .similar-list { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.5rem; }
+    .similar-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.45rem 0.6rem;
+      background: #f8fafc;
+      font-size: 0.82rem;
+    }
+    .similar-item .meta { color: var(--muted); font-size: 0.75rem; margin-bottom: 0.2rem; }
+    .similar-item .score { color: var(--primary-light); font-weight: 600; }
+    .leis-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.6rem; }
+    .leis-filters input, .leis-filters select {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.35rem 0.5rem;
+      font: inherit;
+    }
+    .leis-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .leis-table th, .leis-table td { border-bottom: 1px solid var(--border); padding: 0.4rem 0.45rem; text-align: left; vertical-align: top; }
+    .leis-table th { background: #edf2f7; position: sticky; top: 0; }
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+      display: none; align-items: center; justify-content: center; z-index: 1000;
+      padding: 1rem;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      background: #fff; border-radius: 12px; max-width: 420px; width: 100%;
+      max-height: 85vh; overflow: auto; padding: 1rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    .modal h3 { margin-bottom: 0.6rem; color: var(--primary); }
+    .modal .sess-list { max-height: 45vh; overflow: auto; border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem; margin: 0.5rem 0; }
+    .modal label.sess-item { display: flex; gap: 0.4rem; align-items: flex-start; font-size: 0.82rem; padding: 0.25rem 0.15rem; }
+    .modal-actions { display: flex; gap: 0.4rem; justify-content: flex-end; flex-wrap: wrap; margin-top: 0.75rem; }
   </style>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
   <header>
@@ -471,13 +562,19 @@
       <div class="subtitle">Projetos, Indicações e Leis · Gabinete do Vereador Nei</div>
     </div>
     <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
-      <button class="btn btn-outline" onclick="exportCSV()">Exportar CSV</button>
+      <button class="btn btn-outline" id="btnExport" onclick="openExportModal()">Exportar Excel</button>
       <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">Importar JSON</button>
       <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFiles(event)" />
     </div>
   </header>
 
-  <div class="container">
+  <div class="tabs" id="mainTabs">
+    <button type="button" class="tab-btn active" data-panel="materias" onclick="switchPanel('materias')">Matérias</button>
+    <button type="button" class="tab-btn" data-panel="leis" onclick="switchPanel('leis')">Leis</button>
+    <button type="button" class="tab-btn" data-panel="indicacoes" onclick="switchPanel('indicacoes')">Nova Indicação</button>
+  </div>
+
+  <div class="container panel active" id="panel-materias">
     <div class="filters" id="filtersBar">
       <div class="filter-group search-box">
         <label>Buscar</label>
@@ -542,6 +639,72 @@
     </div>
   </div>
 
+  <!-- Painel Leis -->
+  <div class="container panel" id="panel-leis">
+    <div class="panel-body">
+      <div class="panel-card">
+        <h2>Consulta de Leis</h2>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.5rem;">
+          Base extraída dos PDFs oficiais (número, ementa e data de sanção). Digite para buscar ou comparar ementas semelhantes.
+        </p>
+        <div class="leis-filters">
+          <input type="text" id="leiBusca" placeholder="Buscar número ou ementa..." oninput="renderLeis()" style="flex:2;min-width:160px;" />
+          <select id="leiAno" onchange="renderLeis()"><option value="">Todos os anos</option></select>
+          <span id="leiCount" style="align-self:center;font-size:0.8rem;color:var(--muted);"></span>
+        </div>
+        <div class="panel-card" style="margin:0;background:#f7fafc;">
+          <label style="font-size:0.8rem;font-weight:600;">Comparar ementa (mostra leis parecidas)</label>
+          <textarea id="leiCompare" placeholder="Digite ou cole uma ementa de lei..." oninput="renderLeiSimilar()"></textarea>
+          <div class="similar-list" id="leiSimilar"></div>
+        </div>
+        <div style="max-height:50vh;overflow:auto;margin-top:0.6rem;">
+          <table class="leis-table">
+            <thead><tr><th>Lei</th><th>Ano</th><th>Data Sanção</th><th>Ementa</th></tr></thead>
+            <tbody id="leisBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Painel Nova Indicação -->
+  <div class="container panel" id="panel-indicacoes">
+    <div class="panel-body">
+      <div class="panel-card">
+        <h2>Nova Indicação</h2>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.5rem;">
+          Digite o texto da indicação. O app compara com as indicações já cadastradas e mostra as mais parecidas.
+          Nada é salvo no JSON — use <strong>Copiar</strong> para colar onde precisar. A inclusão oficial continua pela pauta.
+        </p>
+        <textarea id="indTexto" placeholder="Texto da nova indicação..." oninput="renderIndSimilar()"></textarea>
+        <div style="display:flex;gap:0.4rem;margin-top:0.5rem;flex-wrap:wrap;">
+          <button type="button" class="btn btn-primary" onclick="copyIndTexto()">📋 Copiar texto</button>
+          <button type="button" class="btn btn-outline" onclick="document.getElementById('indTexto').value=''; renderIndSimilar();">Limpar</button>
+          <span id="indCopyStatus" style="font-size:0.8rem;color:var(--success);align-self:center;"></span>
+        </div>
+        <h2 style="margin-top:0.9rem;">Indicações semelhantes</h2>
+        <div class="similar-list" id="indSimilar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal exportação -->
+  <div class="modal-backdrop" id="exportModal">
+    <div class="modal">
+      <h3>Exportar Excel</h3>
+      <p style="font-size:0.82rem;color:var(--muted);">Escolha as sessões. As demais colunas saem na ordem combinada.</p>
+      <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="toggleAllSessoesExport(true)">Marcar todas</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="toggleAllSessoesExport(false)">Desmarcar</button>
+      </div>
+      <div class="sess-list" id="exportSessList"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeExportModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="exportExcel()">Baixar Excel</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // defaultOn = PC | mobileOn = celular (lista mais enxuta)
     const COLS = [
@@ -591,6 +754,8 @@
     }
     initColumns();
 
+    let leis = [];
+
     async function loadData() {
       try {
         const res = await fetch("dados.json");
@@ -603,6 +768,272 @@
         document.getElementById("tbody").innerHTML =
           '<tr><td class="empty" colspan="20">Erro ao carregar dados.json — use Importar JSON ou publique o arquivo junto do index.html</td></tr>';
       }
+      try {
+        const resL = await fetch("leis.json");
+        if (resL.ok) {
+          leis = await resL.json();
+          populateLeiFilters();
+          renderLeis();
+        }
+      } catch (e) {
+        console.warn("leis.json não carregado", e);
+      }
+    }
+
+    function switchPanel(name) {
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      const panel = document.getElementById("panel-" + name);
+      if (panel) panel.classList.add("active");
+      const btn = document.querySelector('.tab-btn[data-panel="' + name + '"]');
+      if (btn) btn.classList.add("active");
+      const exp = document.getElementById("btnExport");
+      if (exp) exp.style.display = (name === "materias") ? "" : "none";
+    }
+
+    function tokensTexto(s) {
+      return String(s || "")
+        .toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^\p{L}\p{N}\s]/gu, " ")
+        .split(/\s+/)
+        .filter(w => w.length >= 3);
+    }
+
+    function similaridadeTexto(a, b) {
+      const ta = new Set(tokensTexto(a));
+      const tb = new Set(tokensTexto(b));
+      if (!ta.size || !tb.size) return 0;
+      let inter = 0;
+      ta.forEach(t => { if (tb.has(t)) inter++; });
+      const union = new Set([...ta, ...tb]).size;
+      return inter / union;
+    }
+
+    function populateLeiFilters() {
+      const anos = [...new Set(leis.map(l => l.ano_sancao).filter(Boolean))].sort((a,b) => b - a);
+      const sel = document.getElementById("leiAno");
+      if (!sel) return;
+      sel.innerHTML = '<option value="">Todos os anos</option>';
+      anos.forEach(a => {
+        const o = document.createElement("option");
+        o.value = a;
+        o.textContent = a;
+        sel.appendChild(o);
+      });
+    }
+
+    function renderLeis() {
+      const q = (document.getElementById("leiBusca")?.value || "").trim().toLowerCase();
+      const ano = document.getElementById("leiAno")?.value || "";
+      let list = leis.slice();
+      if (ano) list = list.filter(l => String(l.ano_sancao) === String(ano));
+      if (q) {
+        list = list.filter(l =>
+          String(l.lei).includes(q) ||
+          (l.ementa || "").toLowerCase().includes(q)
+        );
+      }
+      list.sort((a, b) => (parseInt(b.lei,10)||0) - (parseInt(a.lei,10)||0));
+      const body = document.getElementById("leisBody");
+      const cnt = document.getElementById("leiCount");
+      if (cnt) cnt.textContent = list.length + " lei(s)";
+      if (!body) return;
+      if (!list.length) {
+        body.innerHTML = '<tr><td colspan="4">Nenhuma lei encontrada</td></tr>';
+        return;
+      }
+      body.innerHTML = list.map(l =>
+        "<tr><td><strong>" + escapeHtml(String(l.lei)) + "</strong></td>" +
+        "<td>" + escapeHtml(String(l.ano_sancao || "—")) + "</td>" +
+        "<td>" + escapeHtml(formatDate(l.data_sancao)) + "</td>" +
+        "<td>" + escapeHtml(l.ementa || "—") + "</td></tr>"
+      ).join("");
+    }
+
+    function renderLeiSimilar() {
+      const box = document.getElementById("leiSimilar");
+      const texto = document.getElementById("leiCompare")?.value || "";
+      if (!box) return;
+      if (texto.trim().length < 12) {
+        box.innerHTML = '<div class="similar-item meta">Digite pelo menos algumas palavras para comparar…</div>';
+        return;
+      }
+      const ranked = leis
+        .map(l => ({ l, score: similaridadeTexto(texto, l.ementa || "") }))
+        .filter(x => x.score >= 0.18)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 12);
+      if (!ranked.length) {
+        box.innerHTML = '<div class="similar-item">Nenhuma ementa bem parecida encontrada.</div>';
+        return;
+      }
+      box.innerHTML = ranked.map(({ l, score }) =>
+        '<div class="similar-item"><div class="meta">Lei ' + escapeHtml(String(l.lei)) +
+        " · " + escapeHtml(formatDate(l.data_sancao)) +
+        ' · <span class="score">' + Math.round(score * 100) + '% parecida</span></div>' +
+        escapeHtml(l.ementa || "—") + "</div>"
+      ).join("");
+    }
+
+    function renderIndSimilar() {
+      const box = document.getElementById("indSimilar");
+      const texto = document.getElementById("indTexto")?.value || "";
+      if (!box) return;
+      if (texto.trim().length < 12) {
+        box.innerHTML = '<div class="similar-item meta">Digite a indicação para ver semelhantes…</div>';
+        return;
+      }
+      const inds = dados.filter(d => {
+        const t = (d.tipo || "").toLowerCase();
+        return t.includes("indica");
+      });
+      const ranked = inds
+        .map(d => ({ d, score: similaridadeTexto(texto, d.ementa || "") }))
+        .filter(x => x.score >= 0.15)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 15);
+      if (!ranked.length) {
+        box.innerHTML = '<div class="similar-item">Nenhuma indicação bem parecida no JSON.</div>';
+        return;
+      }
+      box.innerHTML = ranked.map(({ d, score }) =>
+        '<div class="similar-item"><div class="meta">Indicação ' + escapeHtml(String(d.numero)) +
+        "/" + escapeHtml(String(d.ano || "")) +
+        " · " + escapeHtml(d.autor || "—") +
+        " · " + escapeHtml(formatDate(d.leitura || d.data_sessao)) +
+        ' · <span class="score">' + Math.round(score * 100) + '%</span></div>' +
+        escapeHtml(d.ementa || "—") + "</div>"
+      ).join("");
+    }
+
+    async function copyIndTexto() {
+      const texto = document.getElementById("indTexto")?.value || "";
+      const st = document.getElementById("indCopyStatus");
+      if (!texto.trim()) {
+        if (st) st.textContent = "Nada para copiar.";
+        return;
+      }
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(texto);
+        else {
+          const ta = document.createElement("textarea");
+          ta.value = texto;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        }
+        if (st) {
+          st.textContent = "Copiado!";
+          setTimeout(() => { st.textContent = ""; }, 1500);
+        }
+      } catch (e) {
+        if (st) st.textContent = "Falha ao copiar.";
+      }
+    }
+
+    function periodoLegislativo(iso) {
+      if (!iso) return "";
+      const m = parseInt(String(iso).split("-")[1], 10);
+      if (!m) return "";
+      return m <= 6 ? "1º Período" : "2º Período";
+    }
+
+    function formatSessaoCompleta(d) {
+      if (!d.sessao && !d.data_sessao) return "";
+      const n = d.sessao != null ? numSessao2(d.sessao) + "ª" : "";
+      const tipo = d.tipo_sessao || "Ordinária";
+      const per = periodoLegislativo(d.data_sessao || d.leitura);
+      const data = d.data_sessao ? formatDate(d.data_sessao) : "";
+      const parts = [];
+      if (n) parts.push(n + " Sessão " + tipo);
+      else parts.push("Sessão " + tipo);
+      if (per) parts.push(per);
+      if (data) parts.push(data);
+      return parts.join("  -  ");
+    }
+
+    function openExportModal() {
+      const box = document.getElementById("exportSessList");
+      if (!box) return;
+      const map = new Map();
+      dados.forEach(d => {
+        const k = chaveSessao(d);
+        if (!k) return;
+        if (!map.has(k)) {
+          map.set(k, {
+            key: k,
+            label: formatSessaoCompleta(d),
+            data: d.data_sessao || ""
+          });
+        }
+      });
+      const list = [...map.values()].sort((a, b) => String(b.data).localeCompare(String(a.data)));
+      box.innerHTML = list.map(s =>
+        '<label class="sess-item"><input type="checkbox" class="export-sess" value="' +
+        escapeHtml(s.key) + '" checked /> <span>' + escapeHtml(s.label) + "</span></label>"
+      ).join("") || "<div>Nenhuma sessão nos dados.</div>";
+      document.getElementById("exportModal").classList.add("show");
+    }
+
+    function closeExportModal() {
+      document.getElementById("exportModal").classList.remove("show");
+    }
+
+    function toggleAllSessoesExport(on) {
+      document.querySelectorAll(".export-sess").forEach(c => { c.checked = !!on; });
+    }
+
+    function exportExcel() {
+      if (typeof XLSX === "undefined") {
+        alert("Biblioteca Excel não carregou. Verifique a internet e tente de novo.");
+        return;
+      }
+      const selected = new Set(
+        [...document.querySelectorAll(".export-sess:checked")].map(c => c.value)
+      );
+      if (!selected.size) {
+        alert("Selecione pelo menos uma sessão.");
+        return;
+      }
+      const rows = dados.filter(d => {
+        const k = chaveSessao(d);
+        return k && selected.has(k);
+      });
+      if (!rows.length) {
+        alert("Nenhum registro nessas sessões.");
+        return;
+      }
+      const headers = [
+        "Sessão/Data", "Matérias", "Nº", "Ano", "Autor", "Ementa",
+        "Lei", "Ano", "Data Sanção", "Tema", "Calendario", "Bairro", "Secretaria",
+        "Leitura", "1ª Vot.", "2ª Vot.", "Vot. Un."
+      ];
+      const data = [headers].concat(rows.map(d => [
+        formatSessaoCompleta(d),
+        d.tipo || "",
+        d.numero != null ? d.numero : "",
+        d.ano != null ? d.ano : "",
+        d.autor || "",
+        d.ementa || "",
+        d.lei || "",
+        d.data_sancao ? String(d.data_sancao).slice(0, 4) : "",
+        d.data_sancao ? formatDate(d.data_sancao) : "",
+        d.tema || "",
+        d.calendario || "",
+        d.bairro || "",
+        d.secretaria || "",
+        d.leitura ? formatDate(d.leitura) : "",
+        d.primeira_votacao ? formatDate(d.primeira_votacao) : "",
+        d.segunda_votacao ? formatDate(d.segunda_votacao) : "",
+        d.votacao_unica ? formatDate(d.votacao_unica) : ""
+      ]));
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Materias");
+      XLSX.writeFile(wb, "materias_guapimirim.xlsx");
+      closeExportModal();
     }
 
     function uniqueValues(key) {
@@ -762,6 +1193,35 @@
       btn.classList.add("playing");
       btn.textContent = "⏹ Parar";
       speechSynthesis.speak(_utterance);
+    }
+
+    async function copyEmenta(btn) {
+      const td = btn.closest("td");
+      const texto = (td && td.getAttribute("data-ementa")) || "";
+      if (!texto || texto === "—") return;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(texto);
+        } else {
+          const ta = document.createElement("textarea");
+          ta.value = texto;
+          ta.style.position = "fixed";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        }
+        const old = btn.textContent;
+        btn.classList.add("copied");
+        btn.textContent = "✓ Copiado";
+        setTimeout(() => {
+          btn.classList.remove("copied");
+          btn.textContent = old || "📋 Copiar";
+        }, 1500);
+      } catch (e) {
+        alert("Não foi possível copiar a ementa.");
+      }
     }
 
     // algumas plataformas carregam vozes de forma assíncrona
@@ -1035,6 +1495,7 @@
             '<span class="ementa-text">' + safe + '</span>' +
             '<div class="ementa-audio" onclick="event.stopPropagation()">' +
               '<button type="button" class="btn-audio" onclick="toggleSpeak(this)">▶ Ouvir</button>' +
+              '<button type="button" class="btn-copy" onclick="copyEmenta(this)">📋 Copiar</button>' +
               '<span class="audio-hint">voz do aparelho</span>' +
             '</div>';
           return cell(
