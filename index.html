@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>Câmara de Guapimirim – Projetos e Indicações</title>
+  <link rel="icon" type="image/png" href="brasao.png" />
+  <link rel="apple-touch-icon" href="brasao.png" />
+  <meta name="theme-color" content="#1a365d" />
   <style>
     :root {
       --primary: #1a365d;
@@ -45,6 +48,23 @@
     }
     header h1 { font-size: 1.05rem; font-weight: 600; }
     header .subtitle { font-size: 0.75rem; opacity: 0.85; }
+    header .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      min-width: 0;
+    }
+    header .brand-logo {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      flex-shrink: 0;
+      background: #fff;
+      border-radius: 50%;
+      padding: 3px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    header .brand-text { min-width: 0; }
     .container {
       max-width: 1800px;
       margin: 0 auto;
@@ -405,6 +425,7 @@
       header h1 { font-size: 0.85rem; }
       header .subtitle { display: none; }
       header .btn { padding: 0.22rem 0.4rem; font-size: 0.7rem; }
+      header .brand-logo { width: 36px; height: 36px; padding: 2px; }
       .container { padding: 0.2rem 0.25rem; }
       .filters {
         gap: 0.2rem;
@@ -570,9 +591,12 @@
 </head>
 <body>
   <header>
-    <div>
-      <h1>Câmara Municipal de Guapimirim</h1>
-      <div class="subtitle">Projetos, Indicações e Leis · Gabinete do Vereador Nei</div>
+    <div class="brand">
+      <img class="brand-logo" src="brasao.png" alt="Brasão do Município de Guapimirim" width="48" height="48" />
+      <div class="brand-text">
+        <h1>Câmara Municipal de Guapimirim</h1>
+        <div class="subtitle">Projetos, Indicações e Leis · Gabinete do Vereador Nei</div>
+      </div>
     </div>
     <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
       <button class="btn btn-outline" id="btnExport" onclick="openExportModal()">Exportar Excel</button>
