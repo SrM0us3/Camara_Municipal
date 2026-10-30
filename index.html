@@ -1890,7 +1890,11 @@
     }
 
     function visibleCols() {
-      return COLS.filter(c => colVisible[c.id]);
+      return COLS.filter(c => {
+        // no modo edição, coluna 📌/✎ fica visível também no celular
+        if (c.id === "pin" && editMode) return true;
+        return colVisible[c.id];
+      });
     }
 
     function computePinOffsets() {
@@ -2080,7 +2084,10 @@
           }
         }).join("");
 
-        return '<tr class="' + rowCls + '" data-id="' + escapeHtml(d.id) + '">' + cells + '</tr>';
+        const rowClick = editMode
+          ? ' onclick="if(!event.target.closest(\'button,a,td.ementa\')) openEditModal(\'' + escapeHtml(d.id) + '\')"'
+          : "";
+        return '<tr class="' + rowCls + '" data-id="' + escapeHtml(d.id) + '"' + rowClick + '>' + cells + '</tr>';
       }).join("");
 
       // corrige left das colunas fixas com largura real
