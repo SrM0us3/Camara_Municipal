@@ -13,6 +13,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Guapimirim" />
   <meta name="application-name" content="Guapimirim" />
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
   <style>
     :root {
       --primary: #1a365d;
@@ -567,6 +570,23 @@
     }
     .similar-item .meta { color: var(--muted); font-size: 0.75rem; margin-bottom: 0.2rem; }
     .similar-item .score { color: var(--primary-light); font-weight: 600; }
+    body.edit-mode header { box-shadow: 0 0 0 3px #dd6b20; }
+    .btn-edit-on { background: #dd6b20 !important; border-color: #dd6b20 !important; color: #fff !important; }
+    tr.row-corrigido td { background: #fffaf0; }
+    .badge-corrigido {
+      display: inline-block; font-size: 0.65rem; background: #dd6b20; color: #fff;
+      border-radius: 4px; padding: 0.05rem 0.3rem; margin-left: 0.25rem; vertical-align: middle;
+    }
+    .edit-modal label { display: block; font-size: 0.78rem; font-weight: 600; margin: 0.4rem 0 0.15rem; color: var(--muted); }
+    .edit-modal input, .edit-modal textarea, .edit-modal select {
+      width: 100%; border: 1px solid var(--border); border-radius: 6px;
+      padding: 0.4rem 0.5rem; font: inherit; background: #fff;
+    }
+    .edit-modal textarea { min-height: 90px; resize: vertical; }
+    .cloud-status { font-size: 0.72rem; opacity: 0.9; margin-top: 0.15rem; }
+    .cloud-status.ok { color: #9ae6b4; }
+    .cloud-status.err { color: #feb2b2; }
+    .cloud-status.wait { color: #faf089; }
     .leis-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.6rem; }
     .leis-filters input, .leis-filters select {
       border: 1px solid var(--border);
@@ -604,9 +624,16 @@
         <div class="subtitle">Projetos, Indicações e Leis · Gabinete do Vereador Nei</div>
       </div>
     </div>
-    <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
-      <button class="btn btn-outline" id="btnExport" onclick="openExportModal()">Exportar Excel</button>
-      <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">Importar JSON</button>
+    <div style="display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center;">
+      <div>
+        <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+          <button class="btn btn-outline" id="btnEditMode" onclick="toggleEditMode()">Editar</button>
+          <button class="btn btn-outline" id="btnBackupJson" onclick="backupJsonMesclado()" title="Baixa o JSON como aparece na tela (com correções)">Backup JSON</button>
+          <button class="btn btn-outline" id="btnExport" onclick="openExportModal()">Exportar Excel</button>
+          <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">Importar JSON</button>
+        </div>
+        <div class="cloud-status wait" id="cloudStatus">Nuvem: verificando…</div>
+      </div>
       <input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleFiles(event)" />
     </div>
   </header>
@@ -744,6 +771,48 @@
     </div>
   </div>
 
+  <!-- Modal edição de matéria -->
+  <div class="modal-backdrop" id="editModal">
+    <div class="modal edit-modal" style="max-width:560px;">
+      <h3 id="editModalTitle">Editar matéria</h3>
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:0.4rem;">
+        A correção fica na nuvem e aparece em qualquer dispositivo. O arquivo dados.json só muda no Backup / script.
+      </p>
+      <input type="hidden" id="editId" />
+      <label>Autor</label>
+      <input type="text" id="editAutor" />
+      <label>Ementa</label>
+      <textarea id="editEmenta"></textarea>
+      <label>Status</label>
+      <input type="text" id="editStatus" list="listaStatus" />
+      <datalist id="listaStatus">
+        <option value="Em tramitação"></option>
+        <option value="Aprovado"></option>
+        <option value="Sancionado"></option>
+        <option value="Vetado"></option>
+        <option value="Deferida"></option>
+      </datalist>
+      <label>Lei</label>
+      <input type="text" id="editLei" placeholder="ex.: 1301 ou Vetado" />
+      <label>Data Sanção (AAAA-MM-DD)</label>
+      <input type="text" id="editDataSancao" placeholder="2026-03-15" />
+      <label>Tema</label>
+      <input type="text" id="editTema" />
+      <label>Calendário</label>
+      <input type="text" id="editCalendario" />
+      <label>Bairro</label>
+      <input type="text" id="editBairro" />
+      <label>Secretaria</label>
+      <input type="text" id="editSecretaria" />
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancelar</button>
+        <button type="button" class="btn btn-outline" id="btnLimparCorrecao" onclick="limparCorrecaoAtual()" style="display:none;">Remover correção</button>
+        <button type="button" class="btn btn-primary" onclick="salvarEdicao()">Salvar na nuvem</button>
+      </div>
+      <p id="editMsg" style="font-size:0.8rem;margin-top:0.4rem;color:var(--muted);"></p>
+    </div>
+  </div>
+
   <script>
     // defaultOn = PC | mobileOn = celular (lista mais enxuta)
     const COLS = [
@@ -779,6 +848,286 @@
     let colPinned = {};
     let rowPinned = new Set();
 
+    // ---- Correções na nuvem (Firestore) ----
+    const CAMPOS_EDITAVEIS = [
+      "autor", "ementa", "status", "lei", "data_sancao",
+      "tema", "calendario", "bairro", "secretaria"
+    ];
+    let correcoes = {}; // id -> { campo: valor, ... }
+    let editMode = false;
+    let db = null;
+    let firebaseOk = false;
+    let unsubCorrecoes = null;
+
+    function setCloudStatus(msg, cls) {
+      const el = document.getElementById("cloudStatus");
+      if (!el) return;
+      el.textContent = msg;
+      el.className = "cloud-status " + (cls || "");
+    }
+
+    function firebaseConfigurado() {
+      const c = window.FIREBASE_CONFIG || {};
+      return c.apiKey && c.apiKey !== "COLE_AQUI" && c.projectId && c.projectId !== "COLE_AQUI";
+    }
+
+    function initFirebase() {
+      if (!firebaseConfigurado()) {
+        setCloudStatus("Nuvem: configure firebase-config.js", "err");
+        return false;
+      }
+      if (typeof firebase === "undefined") {
+        setCloudStatus("Nuvem: Firebase não carregou", "err");
+        return false;
+      }
+      try {
+        if (!firebase.apps.length) firebase.initializeApp(window.FIREBASE_CONFIG);
+        db = firebase.firestore();
+        firebaseOk = true;
+        setCloudStatus("Nuvem: conectado", "ok");
+        return true;
+      } catch (e) {
+        console.error(e);
+        setCloudStatus("Nuvem: erro ao conectar", "err");
+        firebaseOk = false;
+        return false;
+      }
+    }
+
+    function escutarCorrecoes() {
+      if (!firebaseOk || !db) return;
+      if (unsubCorrecoes) unsubCorrecoes();
+      unsubCorrecoes = db.collection("correcoes").onSnapshot(
+        (snap) => {
+          const map = {};
+          snap.forEach((doc) => {
+            const data = doc.data() || {};
+            map[doc.id] = data;
+          });
+          correcoes = map;
+          setCloudStatus("Nuvem: " + Object.keys(correcoes).length + " correção(ões)", "ok");
+          pruneCorrecoesAplicadas();
+          if (dados && dados.length) {
+            populateFilters();
+            applyFilters();
+          }
+        },
+        (err) => {
+          console.error(err);
+          setCloudStatus("Nuvem: erro ao ler correções", "err");
+        }
+      );
+    }
+
+    function registroMesclado(d) {
+      if (!d) return d;
+      const c = correcoes[d.id];
+      if (!c) return d;
+      const o = Object.assign({}, d);
+      CAMPOS_EDITAVEIS.forEach((k) => {
+        if (Object.prototype.hasOwnProperty.call(c, k) && c[k] !== undefined && c[k] !== null) {
+          o[k] = c[k];
+        }
+      });
+      return o;
+    }
+
+    function temCorrecao(id) {
+      return !!(correcoes[id] && CAMPOS_EDITAVEIS.some((k) =>
+        Object.prototype.hasOwnProperty.call(correcoes[id], k)
+      ));
+    }
+
+    function dadosMesclados() {
+      return (dados || []).map(registroMesclado);
+    }
+
+    async function salvarCorrecao(id, campos) {
+      if (!firebaseOk || !db) throw new Error("Nuvem não configurada");
+      const payload = Object.assign({}, campos, {
+        updated_at: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      await db.collection("correcoes").doc(String(id)).set(payload, { merge: true });
+    }
+
+    async function removerCorrecao(id) {
+      if (!firebaseOk || !db) throw new Error("Nuvem não configurada");
+      await db.collection("correcoes").doc(String(id)).delete();
+    }
+
+    /** Remove da nuvem correções já iguais ao dados.json publicado */
+    async function pruneCorrecoesAplicadas() {
+      if (!firebaseOk || !db || !dados || !dados.length) return;
+      const porId = {};
+      dados.forEach((d) => { if (d && d.id) porId[d.id] = d; });
+      const ids = Object.keys(correcoes);
+      for (const id of ids) {
+        const base = porId[id];
+        const c = correcoes[id];
+        if (!base || !c) continue;
+        let tudoIgual = true;
+        let temCampo = false;
+        for (const k of CAMPOS_EDITAVEIS) {
+          if (!Object.prototype.hasOwnProperty.call(c, k)) continue;
+          temCampo = true;
+          const cv = c[k] == null ? "" : String(c[k]);
+          const bv = base[k] == null ? "" : String(base[k]);
+          if (cv !== bv) {
+            tudoIgual = false;
+            break;
+          }
+        }
+        if (temCampo && tudoIgual) {
+          try {
+            await db.collection("correcoes").doc(String(id)).delete();
+            console.log("Correção já no JSON — removida da nuvem:", id);
+          } catch (e) {
+            console.warn("Falha ao limpar correção", id, e);
+          }
+        }
+      }
+    }
+
+    function toggleEditMode() {
+      if (!editMode) {
+        if (!firebaseOk) {
+          alert("Configure o arquivo firebase-config.js (projeto Firebase) para editar com sincronização entre aparelhos.");
+          return;
+        }
+        const senha = window.EDIT_PASSWORD || "";
+        if (senha) {
+          const t = prompt("Senha do modo edição:");
+          if (t !== senha) {
+            alert("Senha incorreta.");
+            return;
+          }
+        }
+        editMode = true;
+        document.body.classList.add("edit-mode");
+        const b = document.getElementById("btnEditMode");
+        if (b) {
+          b.textContent = "Sair da edição";
+          b.classList.add("btn-edit-on");
+        }
+      } else {
+        editMode = false;
+        document.body.classList.remove("edit-mode");
+        const b = document.getElementById("btnEditMode");
+        if (b) {
+          b.textContent = "Editar";
+          b.classList.remove("btn-edit-on");
+        }
+        closeEditModal();
+      }
+      applyFilters();
+    }
+
+    function openEditModal(id) {
+      if (!editMode) return;
+      const raw = dados.find((x) => x.id === id);
+      if (!raw) return;
+      const d = registroMesclado(raw);
+      document.getElementById("editId").value = id;
+      document.getElementById("editModalTitle").textContent =
+        (d.tipo || "Matéria") + " " + (d.numero != null ? d.numero : "") + "/" + (d.ano || "");
+      document.getElementById("editAutor").value = d.autor || "";
+      document.getElementById("editEmenta").value = d.ementa || "";
+      document.getElementById("editStatus").value = d.status || "";
+      document.getElementById("editLei").value = d.lei || "";
+      document.getElementById("editDataSancao").value = d.data_sancao || "";
+      document.getElementById("editTema").value = d.tema || "";
+      document.getElementById("editCalendario").value = d.calendario || "";
+      document.getElementById("editBairro").value = d.bairro || "";
+      document.getElementById("editSecretaria").value = d.secretaria || "";
+      document.getElementById("editMsg").textContent = "";
+      const btnL = document.getElementById("btnLimparCorrecao");
+      if (btnL) btnL.style.display = temCorrecao(id) ? "" : "none";
+      document.getElementById("editModal").classList.add("show");
+    }
+
+    function closeEditModal() {
+      const m = document.getElementById("editModal");
+      if (m) m.classList.remove("show");
+    }
+
+    async function salvarEdicao() {
+      const id = document.getElementById("editId").value;
+      const raw = dados.find((x) => x.id === id);
+      if (!raw) return;
+      const msg = document.getElementById("editMsg");
+      const campos = {
+        autor: document.getElementById("editAutor").value.trim(),
+        ementa: document.getElementById("editEmenta").value.trim(),
+        status: document.getElementById("editStatus").value.trim(),
+        lei: document.getElementById("editLei").value.trim(),
+        data_sancao: document.getElementById("editDataSancao").value.trim(),
+        tema: document.getElementById("editTema").value.trim(),
+        calendario: document.getElementById("editCalendario").value.trim(),
+        bairro: document.getElementById("editBairro").value.trim(),
+        secretaria: document.getElementById("editSecretaria").value.trim()
+      };
+      // grava só o que difere do JSON base (ou todos preenchidos para sobrescrever)
+      const patch = {};
+      CAMPOS_EDITAVEIS.forEach((k) => {
+        const novo = campos[k];
+        const base = raw[k] == null ? "" : String(raw[k]);
+        if (String(novo) !== base) patch[k] = novo;
+      });
+      if (!Object.keys(patch).length) {
+        // voltou tudo ao JSON → remove correção
+        try {
+          if (temCorrecao(id)) await removerCorrecao(id);
+          msg.textContent = "Igual ao JSON base — correção removida (se havia).";
+          msg.style.color = "var(--success)";
+        } catch (e) {
+          msg.textContent = "Erro: " + e.message;
+          msg.style.color = "var(--danger)";
+        }
+        return;
+      }
+      try {
+        msg.textContent = "Salvando…";
+        msg.style.color = "var(--muted)";
+        await salvarCorrecao(id, patch);
+        msg.textContent = "Salvo na nuvem. Já aparece nos outros aparelhos.";
+        msg.style.color = "var(--success)";
+        setTimeout(() => closeEditModal(), 600);
+      } catch (e) {
+        console.error(e);
+        msg.textContent = "Erro ao salvar: " + e.message;
+        msg.style.color = "var(--danger)";
+      }
+    }
+
+    async function limparCorrecaoAtual() {
+      const id = document.getElementById("editId").value;
+      if (!id || !confirm("Remover correção da nuvem e voltar aos dados do JSON?")) return;
+      const msg = document.getElementById("editMsg");
+      try {
+        await removerCorrecao(id);
+        msg.textContent = "Correção removida.";
+        msg.style.color = "var(--success)";
+        setTimeout(() => closeEditModal(), 500);
+      } catch (e) {
+        msg.textContent = "Erro: " + e.message;
+        msg.style.color = "var(--danger)";
+      }
+    }
+
+    function backupJsonMesclado() {
+      const mesclado = dadosMesclados();
+      const blob = new Blob([JSON.stringify(mesclado, null, 2)], { type: "application/json;charset=utf-8" });
+      const a = document.createElement("a");
+      const dt = new Date();
+      const stamp = dt.toISOString().slice(0, 10);
+      a.href = URL.createObjectURL(blob);
+      a.download = "dados-backup-" + stamp + ".json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    }
+
     function initColumns() {
       const mobile = isMobile();
       COLS.forEach(c => {
@@ -796,9 +1145,12 @@
     let leis = [];
 
     async function loadData() {
+      initFirebase();
+      if (firebaseOk) escutarCorrecoes();
       try {
         const res = await fetch("dados.json");
         dados = await res.json();
+        await pruneCorrecoesAplicadas();
         populateFilters();
         buildColToolbar();
         applyFilters();
@@ -1182,7 +1534,7 @@
         alert("Selecione pelo menos uma sessão.");
         return;
       }
-      const rows = dados.filter(d => {
+      const rows = dadosMesclados().filter(d => {
         const k = chaveSessaoAno(d);
         return k && selected.has(k);
       });
@@ -1223,7 +1575,10 @@
 
     function uniqueValues(key) {
       const set = new Set();
-      dados.forEach(d => { if (d[key] != null && d[key] !== "") set.add(d[key]); });
+      dados.forEach(raw => {
+        const d = registroMesclado(raw);
+        if (d[key] != null && d[key] !== "") set.add(d[key]);
+      });
       return [...set].sort((a, b) => String(a).localeCompare(String(b), "pt-BR", { numeric: true }));
     }
 
@@ -1443,7 +1798,7 @@
       const ano = document.getElementById("filtroAno").value;
       const sessao = document.getElementById("filtroSessao").value;
 
-      filtered = dados.filter(d => {
+      filtered = dados.map(registroMesclado).filter(d => {
         if (tipo && d.tipo !== tipo) return false;
         if (autor && d.autor !== autor) return false;
         if (tema && d.tema !== tema) return false;
@@ -1652,9 +2007,11 @@
         const leiDisplay = formatLei(d.lei);
         const leiMultiClass = (d.lei && String(d.lei).includes(";")) ? " has-multi" : "";
         const pinned = rowPinned.has(d.id);
+        const corrigido = temCorrecao(d.id);
         const rowCls = [
           isNei(d.autor) ? "vereador-destaque" : "",
-          pinned ? "row-pinned" : ""
+          pinned ? "row-pinned" : "",
+          corrigido ? "row-corrigido" : ""
         ].filter(Boolean).join(" ");
 
         function cell(id, html, extraClass, attrs) {
@@ -1693,10 +2050,15 @@
 
         const cells = cols.map(c => {
           switch (c.id) {
-            case "pin":
+            case "pin": {
+              const editBtn = editMode
+                ? ' <button class="row-pin-btn" title="Editar" onclick="openEditModal(\'' + escapeHtml(d.id) + '\')">✎</button>'
+                : "";
+              const mark = corrigido ? '<span class="badge-corrigido" title="Corrigido na nuvem">c</span>' : "";
               return cell("pin",
                 '<button class="row-pin-btn' + (pinned ? " on" : "") + '" title="Fixar linha" onclick="toggleRowPin(\'' + escapeHtml(d.id) + '\')">' +
-                (pinned ? "📌" : "📍") + '</button>');
+                (pinned ? "📌" : "📍") + '</button>' + editBtn + mark);
+            }
             case "sessao_data": return cell("sessao_data", formatSessao(d));
             case "tipo": return cell("tipo", '<span class="badge ' + tipoClass + '">' + (d.tipo || "—") + '</span>');
             case "numero": return cell("numero", formatNumber(d.numero));

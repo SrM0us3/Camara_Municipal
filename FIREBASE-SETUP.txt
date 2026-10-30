@@ -1,0 +1,39 @@
+Configuração Firebase – edição multi-dispositivo
+================================================
+
+1) Acesse https://console.firebase.google.com e crie um projeto (gratuito).
+2) Clique em "Adicionar app" → Web → registre um nome (ex.: camara-guapimirim).
+3) Copie o objeto firebaseConfig (apiKey, authDomain, projectId, etc.).
+4) No menu: Build → Firestore Database → Criar banco → modo produção.
+5) Aba Regras → publique (início; depois pode restringir):
+
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /correcoes/{id} {
+         allow read: if true;
+         allow write: if true;
+       }
+     }
+   }
+
+   ATENÇÃO: com essas regras, quem souber o link do site pode editar.
+   A senha do app só esconde o botão; não é segurança forte.
+   Depois podemos restringir com login (Firebase Auth).
+
+6) Edite o arquivo firebase-config.js e cole seus valores no lugar de COLE_AQUI.
+7) Ajuste window.EDIT_PASSWORD para a senha do modo edição.
+8) Publique no GitHub Pages junto com index.html:
+   - index.html
+   - firebase-config.js
+   - dados.json, leis.json
+   - brasão / ícones / manifest
+
+Uso no app
+----------
+- Botão "Editar" → senha → modo edição (borda laranja).
+- Ícone ✎ na linha → altera autor, ementa, status, etc. → Salvar na nuvem.
+- Em qualquer aparelho a correção aparece (marca "c" e fundo creme).
+- "Backup JSON" baixa o arquivo JÁ COM as correções (como na tela).
+- Depois do script + publicar dados.json no GitHub, na próxima abertura
+  as correções já iguais ao JSON são apagadas sozinhas da nuvem.
